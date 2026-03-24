@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ren Studios — Nora</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #FAFAF8;
+      --surface: #F4F0EB;
+      --border: #E5E0D8;
+      --text-primary: #1C1C1A;
+      --text-secondary: #7A746E;
+      --accent: #B5A396;
+      --nora-bg: #F2EDE7;
+      --user-bg: #1C1C1A;
+      --user-text: #FAFAF8;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* ── API Key Screen ── */
+    #api-key-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .setup-card {
+      max-width: 460px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .brand-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.6rem;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .brand-sub {
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 3.5rem;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 0.6rem;
+      text-align: left;
+    }
+
+    .field-input {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 1px solid var(--border);
+      background: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 0.75rem;
+      border-radius: 2px;
+    }
+
+    .field-input:focus { border-color: var(--accent); }
+
+    .field-note {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.75rem;
+      text-align: left;
+      line-height: 1.5;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 0.9rem;
+      background: var(--text-primary);
+      color: var(--bg);
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+      border-radius: 2px;
+    }
+
+    .btn-primary:hover { background: #333330; }
+    .btn-primary:disabled { background: var(--accent); cursor: not-allowed; }
+
+    /* ── Chat App ── */
+    #chat-app {
+      display: none;
+      flex-direction: column;
+      height: 100vh;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    .chat-header {
+      padding: 1.4rem 2rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg);
+      flex-shrink: 0;
+    }
+
+    .header-left .h-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.45rem;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .header-left .h-sub {
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-top: 1px;
+    }
+
+    .header-right { text-align: right; }
+
+    .header-right .h-nora {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+    }
+
+    .btn-text {
+      background: none;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 0;
+      margin-top: 3px;
+      display: block;
+      transition: color 0.2s;
+    }
+
+    .btn-text:hover { color: var(--text-primary); }
+
+    /* ── Messages ── */
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 2rem 2rem 1rem;
+      scroll-behavior: smooth;
+    }
+
+    .message {
+      margin-bottom: 1.5rem;
+      max-width: 78%;
+    }
+
+    .message.nora { margin-right: auto; }
+    .message.user { margin-left: auto; }
+
+    .msg-sender {
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 0.35rem;
+    }
+
+    .msg-bubble {
+      padding: 0.9rem 1.15rem;
+      line-height: 1.7;
+      font-size: 0.9rem;
+      border-radius: 2px;
+    }
+
+    .message.nora .msg-bubble {
+      background: var(--nora-bg);
+      color: var(--text-primary);
+      border-radius: 0 8px 8px 8px;
+    }
+
+    .message.user .msg-bubble {
+      background: var(--user-bg);
+      color: var(--user-text);
+      border-radius: 8px 0 8px 8px;
+    }
+
+    /* Nora bubble markdown rendering */
+    .msg-bubble strong { font-weight: 600; }
+    .msg-bubble em { font-style: italic; color: var(--text-secondary); }
+    .msg-bubble .product-name { font-weight: 600; }
+    .msg-bubble .price { color: var(--text-secondary); font-size: 0.85rem; }
+    .msg-bubble .why { font-style: italic; color: var(--text-secondary); }
+    .msg-bubble p { margin-bottom: 0.6rem; }
+    .msg-bubble p:last-child { margin-bottom: 0; }
+
+    /* Typing indicator */
+    .typing {
+      margin-bottom: 1.5rem;
+      max-width: 78%;
+    }
+
+    .typing-dots {
+      display: inline-flex;
+      gap: 5px;
+      padding: 0.9rem 1.15rem;
+      background: var(--nora-bg);
+      border-radius: 0 8px 8px 8px;
+    }
+
+    .dot {
+      width: 5px;
+      height: 5px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 1.3s ease-in-out infinite;
+    }
+
+    .dot:nth-child(2) { animation-delay: 0.18s; }
+    .dot:nth-child(3) { animation-delay: 0.36s; }
+
+    @keyframes pulse {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
+      30% { transform: translateY(-5px); opacity: 1; }
+    }
+
+    /* ── Input ── */
+    .chat-input-area {
+      padding: 1.1rem 2rem 1.5rem;
+      border-top: 1px solid var(--border);
+      background: var(--bg);
+      flex-shrink: 0;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 0.65rem;
+      align-items: flex-end;
+    }
+
+    #user-input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      background: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      color: var(--text-primary);
+      resize: none;
+      outline: none;
+      transition: border-color 0.2s;
+      max-height: 110px;
+      line-height: 1.5;
+      border-radius: 2px;
+    }
+
+    #user-input:focus { border-color: var(--accent); }
+
+    #send-btn {
+      padding: 0.75rem 1.25rem;
+      background: var(--text-primary);
+      color: var(--bg);
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+      align-self: stretch;
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+
+    #send-btn:hover:not(:disabled) { background: #333330; }
+    #send-btn:disabled { background: var(--accent); cursor: not-allowed; }
+
+    /* Scrollbar */
+    #messages::-webkit-scrollbar { width: 3px; }
+    #messages::-webkit-scrollbar-track { background: transparent; }
+    #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* Error */
+    .error-banner {
+      background: #FEF2F2;
+      color: #B91C1C;
+      padding: 0.65rem 1rem;
+      font-size: 0.8rem;
+      border-radius: 2px;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── API Key Screen ── -->
+<div id="api-key-screen">
+  <div class="setup-card">
+    <h1 class="brand-name">Ren Studios</h1>
+    <p class="brand-sub">Personal Styling Assistant</p>
+    <label class="field-label" for="api-key-input">Anthropic API Key</label>
+    <input
+      type="password"
+      id="api-key-input"
+      class="field-input"
+      placeholder="sk-ant-api03-…"
+      autocomplete="off"
+      onkeydown="if(event.key==='Enter') startChat()"
+    />
+    <p class="field-note">Your key is used only for this session and is never stored or transmitted beyond the API call.</p>
+    <button class="btn-primary" onclick="startChat()">Begin</button>
+    <div id="setup-error"></div>
+  </div>
+</div>
+
+<!-- ── Chat Interface ── -->
+<div id="chat-app">
+  <header class="chat-header">
+    <div class="header-left">
+      <div class="h-brand">Ren Studios</div>
+      <div class="h-sub">Personal Styling Assistant</div>
+    </div>
+    <div class="header-right">
+      <div class="h-nora">Nora</div>
+      <button class="btn-text" onclick="resetToSetup()">Change API Key</button>
+    </div>
+  </header>
+  <div id="messages"></div>
+  <div class="chat-input-area">
+    <div class="input-row">
+      <textarea
+        id="user-input"
+        placeholder="Message Nora…"
+        rows="1"
+        onkeydown="handleKey(event)"
+        oninput="autoResize(this)"
+      ></textarea>
+      <button id="send-btn" onclick="sendMessage()">Send</button>
+    </div>
+    <div id="chat-error"></div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════
+//  DATA
+// ════════════════════════════════════════════════
+
+const PRODUCT_CSV = `product_id,brand,product_name,category,color,material,length,fit,sleeve,neckline,occasion,season,style,price,description
+D001,Ren Studios,Freja Linen Midi Dress,Dress,Sand,Linen,Midi,Relaxed,Short,V Neck,Casual,Summer,Effortless & Casual,165,Airy linen midi dress with relaxed Scandinavian shape
+D002,Ren Studios,Astrid Silk Slip Dress,Dress,Black,Silk,Maxi,Slim,Strap,V Neck,Evening,Summer,Evening & Polished,210,Fluid silk slip dress with elegant drape
+D003,Ren Studios,Elin Cotton Shirt Dress,Dress,White,Cotton Poplin,Midi,Regular,Long,Collar,Work,Spring,Classic & Timeless,175,Crisp cotton shirt dress with minimalist tailoring
+D004,Ren Studios,Ingrid Wrap Dress,Dress,Navy,Viscose,Midi,Regular,Long,V Neck,Work,Autumn,Classic & Timeless,185,Soft wrap dress with adjustable waist tie
+D005,Ren Studios,Sigrid Knit Dress,Dress,Charcoal,Merino Wool,Midi,Slim,Long,Crew,Casual,Winter,Minimalist & Clean,195,Soft merino knit dress with refined structure
+D006,Ren Studios,Alva Summer Linen Dress,Dress,Sage,Linen,Midi,Relaxed,Short,Scoop,Casual,Summer,Effortless & Casual,160,Breezy linen dress designed for warm weather
+D007,Ren Studios,Klara Satin Evening Dress,Dress,Emerald,Satin,Maxi,Slim,Sleeveless,V Neck,Evening,Autumn,Evening & Polished,230,Glossy satin evening dress with fluid movement
+D008,Ren Studios,Maja Belted Midi Dress,Dress,Camel,Cotton Twill,Midi,Tailored,Short,Square,Work,Spring,Classic & Timeless,190,Structured midi dress with sculpted waist
+D009,Ren Studios,Nora Pleated Dress,Dress,Soft Blue,Poly Blend,Midi,Regular,Short,Crew,Work,Spring,Classic & Timeless,180,Light pleated dress with elegant movement
+D010,Ren Studios,Elsa Linen Shirt Dress,Dress,Olive,Linen,Midi,Relaxed,Long,Collar,Casual,Summer,Effortless & Casual,170,Relaxed linen shirt dress with soft tailoring
+D011,Ren Studios,Ida Silk Midi Dress,Dress,Ivory,Silk,Midi,Slim,Sleeveless,Boat,Evening,Spring,Evening & Polished,220,Minimal silk dress with elegant simplicity
+D012,Ren Studios,Agnes Cotton Midi Dress,Dress,Dusty Rose,Cotton,Midi,Regular,Short,Crew,Casual,Spring,Effortless & Casual,165,Soft cotton midi dress with clean lines
+D013,Ren Studios,Solveig Wrap Midi Dress,Dress,Burgundy,Viscose,Midi,Regular,Long,V Neck,Evening,Autumn,Evening & Polished,195,Flowing wrap dress with refined drape
+D014,Ren Studios,Liv Knit Midi Dress,Dress,Cream,Merino Wool,Midi,Slim,Long,Crew,Casual,Winter,Minimalist & Clean,200,Comfortable knit dress with Scandinavian minimal style
+D015,Ren Studios,Tilda Linen Summer Dress,Dress,Light Blue,Linen,Midi,Relaxed,Sleeveless,Scoop,Casual,Summer,Effortless & Casual,158,Light linen dress with airy feel
+D016,Ren Studios,Emilia Satin Dress,Dress,Champagne,Satin,Midi,Slim,Sleeveless,Square,Evening,Spring,Evening & Polished,225,Fluid satin dress with soft sheen
+D017,Ren Studios,Hanna Cotton Shirt Dress,Dress,Stone,Cotton Poplin,Midi,Regular,Long,Collar,Work,Spring,Classic & Timeless,175,Modern cotton shirt dress with minimal design
+D018,Ren Studios,Frida Belted Dress,Dress,Navy,Cotton Twill,Midi,Tailored,Short,Crew,Work,Autumn,Classic & Timeless,185,Structured dress with refined waist
+D019,Ren Studios,Karin Pleated Midi Dress,Dress,Light Grey,Poly Blend,Midi,Regular,Sleeveless,Boat,Work,Spring,Classic & Timeless,178,Elegant pleated dress with flowing skirt
+D020,Ren Studios,Linnea Linen Dress,Dress,White,Linen,Midi,Relaxed,Short,V Neck,Casual,Summer,Effortless & Casual,168,Classic linen dress with relaxed silhouette
+D021,Ren Studios,Saga Silk Slip Dress,Dress,Forest Green,Silk,Maxi,Slim,Strap,V Neck,Evening,Summer,Evening & Polished,215,Minimal silk slip dress with fluid lines
+D022,Ren Studios,Petra Cotton Dress,Dress,Black,Cotton,Midi,Regular,Short,Crew,Casual,Autumn,Effortless & Casual,170,Simple cotton dress with modern shape
+D023,Ren Studios,Ylva Wrap Dress,Dress,Plum,Viscose,Midi,Regular,Long,V Neck,Evening,Autumn,Evening & Polished,188,Wrap dress with flattering drape
+D024,Ren Studios,Helena Knit Dress,Dress,Taupe,Merino Wool,Midi,Slim,Long,Crew,Casual,Winter,Minimalist & Clean,205,Soft knit dress designed for cool weather
+D025,Ren Studios,Malin Linen Dress,Dress,Clay,Linen,Midi,Relaxed,Sleeveless,Scoop,Casual,Summer,Effortless & Casual,162,Natural linen dress with relaxed fit
+D026,Ren Studios,Annika Satin Evening Dress,Dress,Navy,Satin,Maxi,Slim,Sleeveless,V Neck,Evening,Winter,Evening & Polished,235,Flowing satin evening dress with elegant shape
+D027,Ren Studios,Birgit Shirt Dress,Dress,Olive,Cotton Poplin,Midi,Tailored,Long,Collar,Work,Autumn,Classic & Timeless,172,Sharp shirt dress with tailored lines
+D028,Ren Studios,Runa Belted Dress,Dress,Beige,Cotton Twill,Midi,Tailored,Short,Square,Work,Spring,Classic & Timeless,188,Structured belted dress with modern profile
+D029,Ren Studios,Kerstin Pleated Dress,Dress,Dusty Blue,Poly Blend,Midi,Regular,Sleeveless,Boat,Work,Spring,Classic & Timeless,176,Soft pleated dress with movement
+D030,Ren Studios,Stina Linen Midi Dress,Dress,Sand,Linen,Midi,Relaxed,Short,V Neck,Casual,Summer,Effortless & Casual,165,Timeless linen midi dress with airy texture
+D031,Ren Studios,Ada Silk Dress,Dress,Ivory,Silk,Midi,Slim,Sleeveless,Boat,Evening,Spring,Evening & Polished,220,Refined silk dress with minimalist elegance
+D032,Ren Studios,Mira Cotton Summer Dress,Dress,Sage,Cotton,Midi,Relaxed,Short,Scoop,Casual,Summer,Effortless & Casual,160,Comfortable cotton dress for warm days
+D033,Ren Studios,Lotta Wrap Dress,Dress,Burgundy,Viscose,Midi,Regular,Long,V Neck,Evening,Autumn,Evening & Polished,192,Wrap dress with soft flowing lines
+D034,Ren Studios,Tove Knit Dress,Dress,Charcoal,Merino Wool,Midi,Slim,Long,Crew,Casual,Winter,Minimalist & Clean,198,Soft knit dress with modern silhouette
+D035,Ren Studios,Siv Linen Dress,Dress,Light Grey,Linen,Midi,Relaxed,Sleeveless,Scoop,Casual,Summer,Effortless & Casual,158,Relaxed linen dress with light texture
+D036,Ren Studios,Greta Satin Dress,Dress,Champagne,Satin,Midi,Slim,Sleeveless,Square,Evening,Spring,Evening & Polished,228,Fluid satin dress with elegant shine
+D037,Ren Studios,Alina Shirt Dress,Dress,White,Cotton Poplin,Midi,Tailored,Long,Collar,Work,Spring,Classic & Timeless,170,Classic shirt dress with refined structure
+D038,Ren Studios,Johanna Belted Dress,Dress,Camel,Cotton Twill,Midi,Tailored,Short,Crew,Work,Autumn,Classic & Timeless,190,Structured dress with defined waist
+D039,Ren Studios,Carina Pleated Dress,Dress,Soft Pink,Poly Blend,Midi,Regular,Sleeveless,Boat,Casual,Spring,Effortless & Casual,175,Delicate pleated dress with soft volume
+D040,Ren Studios,Elvira Linen Dress,Dress,Sage,Linen,Midi,Relaxed,Short,V Neck,Casual,Summer,Effortless & Casual,168,Natural linen dress with breezy shape
+D041,Ren Studios,Marit Silk Slip Dress,Dress,Black,Silk,Maxi,Slim,Strap,V Neck,Evening,Summer,Evening & Polished,215,Minimal silk slip dress with elegant drape
+D042,Ren Studios,Anneli Cotton Dress,Dress,Olive,Cotton,Midi,Regular,Short,Crew,Casual,Spring,Effortless & Casual,168,Simple cotton dress with refined fit
+D043,Ren Studios,Kajsa Wrap Dress,Dress,Navy,Viscose,Midi,Regular,Long,V Neck,Work,Autumn,Classic & Timeless,188,Soft wrap dress with flattering silhouette
+D044,Ren Studios,Elna Knit Dress,Dress,Cream,Merino Wool,Midi,Slim,Long,Crew,Casual,Winter,Minimalist & Clean,200,Comfortable knit dress with clean lines
+D045,Ren Studios,Tyra Linen Dress,Dress,Sand,Linen,Midi,Relaxed,Sleeveless,Scoop,Casual,Summer,Effortless & Casual,160,Relaxed linen dress with Scandinavian ease
+D046,Ren Studios,Sanna Satin Evening Dress,Dress,Deep Green,Satin,Maxi,Slim,Sleeveless,V Neck,Evening,Winter,Evening & Polished,232,Glossy satin dress with flowing form
+D047,Ren Studios,Rakel Shirt Dress,Dress,Stone,Cotton Poplin,Midi,Tailored,Long,Collar,Work,Spring,Classic & Timeless,172,Modern shirt dress with subtle tailoring
+D048,Ren Studios,Noomi Belted Dress,Dress,Beige,Cotton Twill,Midi,Tailored,Short,Square,Work,Spring,Classic & Timeless,188,Structured midi dress with defined waist
+D049,Ren Studios,Alma Pleated Dress,Dress,Soft Blue,Poly Blend,Midi,Regular,Sleeveless,Boat,Casual,Spring,Effortless & Casual,178,Graceful pleated dress with soft movement
+D050,Ren Studios,Isolde Linen Dress,Dress,Light Blue,Linen,Midi,Relaxed,Short,V Neck,Casual,Summer,Effortless & Casual,158,Light linen dress designed for effortless style
+D051,Ren Studios,Freja Mini Dress,Dress,Black,Cotton,Mini,Slim,Short,Scoop,Evening,Summer,Evening & Polished,150,Minimal mini dress with sleek shape
+D052,Ren Studios,Ember Linen Mini Dress,Dress,Clay,Linen,Mini,Relaxed,Sleeveless,Scoop,Casual,Summer,Effortless & Casual,145,Relaxed linen mini dress for warm days
+D053,Ren Studios,Adele Satin Slip Dress,Dress,Silver,Satin,Maxi,Slim,Strap,V Neck,Evening,Winter,Evening & Polished,240,Shimmering satin slip dress with modern elegance
+D054,Ren Studios,Kira Knit Midi Dress,Dress,Forest,Merino Wool,Midi,Slim,Long,Crew,Casual,Winter,Minimalist & Clean,210,Soft knit dress with refined structure
+D055,Ren Studios,Luna Cotton Dress,Dress,White,Cotton,Midi,Relaxed,Short,Crew,Casual,Spring,Effortless & Casual,155,Simple cotton dress with airy shape
+D056,Ren Studios,Sara Wrap Dress,Dress,Deep Red,Viscose,Midi,Regular,Long,V Neck,Evening,Autumn,Evening & Polished,195,Wrap dress with elegant drape
+D057,Ren Studios,Idun Linen Dress,Dress,Sage,Linen,Maxi,Relaxed,Sleeveless,Scoop,Casual,Summer,Effortless & Casual,175,Flowing linen maxi dress with relaxed fit
+D058,Ren Studios,Thyra Satin Midi Dress,Dress,Midnight,Satin,Midi,Slim,Sleeveless,Square,Evening,Winter,Evening & Polished,235,Satin dress with refined evening silhouette
+D059,Ren Studios,Selma Shirt Dress,Dress,Light Blue,Cotton Poplin,Midi,Tailored,Long,Collar,Work,Spring,Classic & Timeless,178,Modern shirt dress with crisp tailoring
+D060,Ren Studios,Edda Knit Dress,Dress,Soft Beige,Merino Wool,Midi,Slim,Long,Crew,Casual,Winter,Minimalist & Clean,205,Warm knit dress with minimalist Nordic design
+RS-B-001,Ren Studios,Britta Silk Blouse,Blouse,White,Silk,Regular,Tailored,Short,Crew,Casual,Autumn,Effortless & Casual,220,Crisp white silk blouse with a tailored cut and clean crew neckline
+RS-B-002,Ren Studios,Dagny Poplin Blouse,Blouse,Camel,Cotton Poplin,Regular,Relaxed,Long,V Neck,Evening,Autumn,Evening & Polished,250,Relaxed camel poplin blouse with long sleeves and a soft V neckline
+RS-B-003,Ren Studios,Ebba Viscose Blouse,Blouse,Ivory,Viscose,Regular,Tailored,Short,V Neck,Casual,Winter,Effortless & Casual,240,Tailored ivory viscose blouse with a draped V neckline and clean finish
+RS-B-004,Ren Studios,Filippa Poplin Blouse,Blouse,Camel,Cotton Poplin,Regular,Relaxed,Long,Collar,Evening,Autumn,Evening & Polished,222,Relaxed long-sleeve poplin blouse with a classic collar for evening
+RS-B-005,Ren Studios,Gunvor Silk Blouse,Blouse,Burgundy,Silk,Regular,Relaxed,Long,V Neck,Work,Spring,Classic & Timeless,380,Fluid burgundy silk blouse with a relaxed shape and open V neckline
+RS-B-006,Ren Studios,Helga Silk Blouse,Blouse,White,Silk,Regular,Slim,Short,Crew,Evening,Autumn,Evening & Polished,307,Fitted white silk blouse with a sleek silhouette and clean crew neckline
+RS-B-007,Ren Studios,Iben Viscose Blouse,Blouse,Stone,Viscose,Regular,Relaxed,Short,V Neck,Casual,Summer,Effortless & Casual,200,Easy-wearing stone viscose blouse with a relaxed shape and V neckline
+RS-B-008,Ren Studios,Jette Silk Blouse,Blouse,Charcoal,Silk,Regular,Tailored,Short,V Neck,Work,Autumn,Classic & Timeless,357,Sharp charcoal silk blouse with tailored structure and a V neckline
+RS-B-009,Ren Studios,Karen Viscose Blouse,Blouse,Navy,Viscose,Regular,Relaxed,Short,Crew,Evening,Autumn,Evening & Polished,336,Relaxed navy viscose blouse with fluid drape and a clean crew neckline
+RS-B-010,Ren Studios,Lena Viscose Blouse,Blouse,Camel,Viscose,Regular,Relaxed,Short,V Neck,Work,Spring,Classic & Timeless,240,Relaxed camel viscose blouse with soft drape and a V neckline for work
+RS-B-011,Ren Studios,Mette Silk Blouse,Blouse,Burgundy,Silk,Regular,Tailored,Short,Collar,Work,Winter,Classic & Timeless,290,Sharp-cut burgundy silk blouse with a tailored fit and classic collar
+RS-B-012,Ren Studios,Nanna Poplin Blouse,Blouse,Ivory,Cotton Poplin,Regular,Regular,Long,Collar,Casual,Spring,Effortless & Casual,276,Classic ivory poplin blouse with long sleeves and a neat collar
+RS-B-013,Ren Studios,Pernille Viscose Blouse,Blouse,Burgundy,Viscose,Regular,Slim,Short,Crew,Work,Autumn,Classic & Timeless,181,Slim-cut burgundy viscose blouse with a clean crew neckline for work
+RS-B-014,Ren Studios,Ragna Silk Blouse,Blouse,White,Silk,Regular,Relaxed,Short,Crew,Casual,Autumn,Effortless & Casual,177,Relaxed white silk blouse with a soft crew neckline for everyday wear
+RS-B-015,Ren Studios,Sigrun Poplin Blouse,Blouse,Cream,Cotton Poplin,Regular,Slim,Long,Crew,Work,Spring,Classic & Timeless,275,Slim cream poplin blouse with long sleeves and a polished crew neckline
+RS-B-016,Ren Studios,Tuva Silk Blouse,Blouse,Black,Silk,Regular,Slim,Long,V Neck,Evening,Winter,Evening & Polished,320,Sleek black silk blouse with a slim fit and open V neckline for evening
+RS-B-017,Ren Studios,Vilde Poplin Blouse,Blouse,Sage,Cotton Poplin,Regular,Relaxed,Long,Crew,Casual,Summer,Effortless & Casual,240,Relaxed sage poplin blouse with long sleeves and a clean crew neckline
+RS-B-018,Ren Studios,Elise Viscose Blouse,Blouse,Forest Green,Viscose,Regular,Slim,Short,V Neck,Work,Summer,Classic & Timeless,215,Slim forest green viscose blouse with a clean V neckline for work
+RS-B-019,Ren Studios,Cecilie Poplin Blouse,Blouse,Sand,Cotton Poplin,Regular,Tailored,Short,Collar,Work,Spring,Classic & Timeless,255,Crisp sand poplin blouse with a tailored cut and neat collar for work
+RS-B-020,Ren Studios,Dorte Silk Blouse,Blouse,Cream,Silk,Regular,Relaxed,Long,V Neck,Evening,Winter,Evening & Polished,290,Relaxed cream silk blouse with a fluid V neckline for evening
+RS-K-016,Ren Studios,Freya Cashmere Knit,Knitwear,Camel,Cashmere Blend,Long,Slim,Long,Crew,Evening,Summer,Evening & Polished,385,Slim camel cashmere knit with long sleeves and a clean crew neckline
+RS-K-017,Ren Studios,Gudrun Wool Knit,Knitwear,Sand,Wool Blend,Long,Tailored,Long,V Neck,Evening,Autumn,Evening & Polished,362,Tailored sand wool blend knit with a refined V neckline for evening
+RS-K-018,Ren Studios,Hege Cashmere Knit,Knitwear,Beige,Cashmere Blend,Regular,Regular,Long,Crew,Casual,Summer,Effortless & Casual,200,Soft beige cashmere knit with a relaxed regular fit and easy crew neckline
+RS-K-019,Ren Studios,Ingunn Cashmere Knit,Knitwear,Charcoal,Cashmere Blend,Regular,Regular,Long,Crew,Evening,Summer,Evening & Polished,364,Lightweight charcoal cashmere knit with a clean regular fit for evening
+RS-K-020,Ren Studios,Jorunn Merino Knit,Knitwear,Sand,Merino Wool,Long,Slim,Long,V Neck,Evening,Summer,Evening & Polished,300,Sleek sand merino knit with a slim silhouette and open V neckline
+RS-K-021,Ren Studios,Kirsten Merino Knit,Knitwear,Sand,Merino Wool,Long,Slim,Long,Crew,Casual,Autumn,Minimalist & Clean,198,Fine-knit sand merino with a slim fit and classic crew neckline
+RS-K-022,Ren Studios,Laila Merino Knit,Knitwear,Olive,Merino Wool,Long,Relaxed,Long,Crew,Work,Summer,Minimalist & Clean,333,Relaxed olive merino knit with an easy drape and crew neckline for work
+RS-K-023,Ren Studios,Marte Merino Knit,Knitwear,Ivory,Merino Wool,Long,Relaxed,Long,V Neck,Evening,Spring,Evening & Polished,255,Relaxed ivory merino knit with a soft V neckline and fluid drape
+RS-K-024,Ren Studios,Randi Merino Knit,Knitwear,Black,Merino Wool,Long,Slim,Long,V Neck,Work,Winter,Minimalist & Clean,340,Refined black merino knit with a slim fit and V neckline for work
+RS-K-025,Ren Studios,Silje Wool Knit,Knitwear,Olive,Wool Blend,Long,Regular,Long,Crew,Work,Autumn,Minimalist & Clean,332,Olive wool blend knit with a regular fit and crew neckline for work
+RS-K-026,Ren Studios,Turid Cashmere Knit,Knitwear,White,Cashmere Blend,Regular,Slim,Long,Crew,Casual,Summer,Effortless & Casual,229,Slim white cashmere knit with a clean crew neckline for everyday wear
+RS-K-027,Ren Studios,Unni Merino Knit,Knitwear,Ivory,Merino Wool,Long,Slim,Long,Crew,Work,Summer,Minimalist & Clean,365,Slim-cut ivory merino knit with a clean crew neckline for work
+RS-K-028,Ren Studios,Vigdis Cashmere Knit,Knitwear,Navy,Cashmere Blend,Long,Slim,Long,V Neck,Work,Autumn,Classic & Timeless,206,Slim navy cashmere knit with a V neckline for polished workwear
+RS-K-029,Ren Studios,Berit Cashmere Knit,Knitwear,Stone,Cashmere Blend,Regular,Regular,Long,Crew,Casual,Spring,Effortless & Casual,396,Soft stone cashmere knit with a regular fit and easy crew neckline
+RS-K-030,Ren Studios,Bente Cashmere Knit,Knitwear,Olive,Cashmere Blend,Regular,Relaxed,Long,Crew,Casual,Autumn,Effortless & Casual,269,Relaxed olive cashmere knit with a cosy crew neckline for everyday wear
+RS-K-031,Ren Studios,Gerd Cashmere Knit,Knitwear,Burgundy,Cashmere Blend,Regular,Slim,Long,Crew,Casual,Winter,Effortless & Casual,310,Slim burgundy cashmere knit with a rich tone and clean crew neckline
+RS-K-032,Ren Studios,Hilde Cashmere Knit,Knitwear,Cream,Cashmere Blend,Regular,Relaxed,Long,Crew,Evening,Winter,Evening & Polished,365,Relaxed cream cashmere knit with a luxurious feel and crew neckline
+RS-K-033,Ren Studios,Iselin Merino Knit,Knitwear,Dusty Pink,Merino Wool,Regular,Regular,Long,V Neck,Casual,Spring,Effortless & Casual,240,Soft dusty pink merino knit with a regular fit and delicate V neckline
+RS-K-034,Ren Studios,Lise Wool Knit,Knitwear,Forest Green,Wool Blend,Long,Tailored,Long,Crew,Work,Winter,Classic & Timeless,295,Tailored forest green wool blend knit with a structured shape for work
+RS-K-035,Ren Studios,Oline Merino Knit,Knitwear,Camel,Merino Wool,Regular,Regular,Long,Crew,Work,Spring,Classic & Timeless,260,Classic camel merino knit with a regular fit and crew neckline for work
+RS-S-031,Ren Studios,Camilla Satin Skirt,Skirt,Light Grey,Satin,Midi,Regular,,,Evening,Winter,Evening & Polished,140,Fluid light grey satin midi skirt with a clean regular cut for evening
+RS-S-032,Ren Studios,Disa Cotton Skirt,Skirt,Olive,Cotton,Mini,Relaxed,,,Casual,Autumn,Effortless & Casual,200,Relaxed olive cotton mini skirt with an easy casual shape
+RS-S-033,Ren Studios,Erika Wool Skirt,Skirt,Stone,Wool Blend,Maxi,Relaxed,,,Evening,Autumn,Evening & Polished,224,Flowing stone wool blend maxi skirt with a relaxed drape for evening
+RS-S-034,Ren Studios,Gunhild Satin Skirt,Skirt,Sand,Satin,Mini,Tailored,,,Evening,Spring,Evening & Polished,316,Tailored sand satin mini skirt with a sleek polished finish
+RS-S-035,Ren Studios,Hedvig Satin Skirt,Skirt,White,Satin,Mini,Regular,,,Casual,Spring,Effortless & Casual,230,White satin mini skirt with a clean regular shape and subtle sheen
+RS-S-036,Ren Studios,Ingeborg Cotton Skirt,Skirt,Sand,Cotton,Midi,Regular,,,Casual,Winter,Effortless & Casual,322,Sand cotton midi skirt with a relaxed regular fit for everyday wear
+RS-S-037,Ren Studios,Josefin Satin Skirt,Skirt,Sand,Satin,Maxi,Relaxed,,,Work,Spring,Classic & Timeless,257,Flowing sand satin maxi skirt with a relaxed silhouette for work
+RS-S-038,Ren Studios,Katrine Satin Skirt,Skirt,White,Satin,Mini,Relaxed,,,Casual,Autumn,Effortless & Casual,174,Relaxed white satin mini skirt with a soft easy shape
+RS-S-039,Ren Studios,Lykke Cotton Skirt,Skirt,Olive,Cotton,Midi,Tailored,,,Work,Winter,Classic & Timeless,270,Tailored olive cotton midi skirt with a sharp structured line for work
+RS-S-040,Ren Studios,Mille Satin Skirt,Skirt,Camel,Satin,Mini,Regular,,,Casual,Summer,Effortless & Casual,240,Camel satin mini skirt with a clean regular cut and warm tone
+RS-S-041,Ren Studios,Nina Satin Skirt,Skirt,Black,Satin,Midi,Regular,,,Evening,Summer,Evening & Polished,256,Sleek black satin midi skirt with fluid movement for evening
+RS-S-042,Ren Studios,Oda Cotton Skirt,Skirt,Soft Blue,Cotton,Maxi,Relaxed,,,Casual,Spring,Effortless & Casual,369,Relaxed soft blue cotton maxi skirt with a breezy casual feel
+RS-S-043,Ren Studios,Pia Cotton Skirt,Skirt,White,Cotton,Maxi,Relaxed,,,Work,Spring,Classic & Timeless,381,Flowing white cotton maxi skirt with a relaxed shape for work
+RS-S-044,Ren Studios,Rikke Wool Skirt,Skirt,Burgundy,Wool Blend,Mini,Slim,,,Casual,Winter,Effortless & Casual,351,Slim-fit burgundy wool blend mini skirt with a sleek winter silhouette
+RS-S-045,Ren Studios,Sofie Wool Skirt,Skirt,Ivory,Wool Blend,Maxi,Regular,,,Work,Spring,Classic & Timeless,390,Ivory wool blend maxi skirt with a regular fit and refined drape for work
+RS-S-046,Ren Studios,Trine Satin Skirt,Skirt,Black,Satin,Midi,Slim,,,Evening,Winter,Evening & Polished,280,Slim black satin midi skirt with a sleek polished finish for evening
+RS-S-047,Ren Studios,Una Wool Skirt,Skirt,Camel,Wool Blend,Midi,Tailored,,,Work,Autumn,Classic & Timeless,310,Tailored camel wool blend midi skirt with a refined structure for work
+RS-S-048,Ren Studios,Vera Cotton Skirt,Skirt,Navy,Cotton,Midi,Regular,,,Work,Summer,Classic & Timeless,245,Classic navy cotton midi skirt with a regular fit for a polished work look
+RS-S-049,Ren Studios,Asta Satin Skirt,Skirt,Dusty Pink,Satin,Mini,Regular,,,Evening,Spring,Evening & Polished,235,Soft dusty pink satin mini skirt with a delicate sheen for evening
+RS-S-050,Ren Studios,Dagmar Wool Skirt,Skirt,Cream,Wool Blend,Maxi,Relaxed,,,Casual,Winter,Minimalist & Clean,340,Relaxed cream wool blend maxi skirt with a soft draped silhouette
+RS-T-046,Ren Studios,Embla Linen Trousers,Trousers,Black,Linen,Full,Tailored,,,Evening,Spring,Evening & Polished,194,Sharp black tailored linen trousers with a clean full-length cut for evening
+RS-T-047,Ren Studios,Fanny Cotton Trousers,Trousers,Beige,Cotton Twill,Full,Regular,,,Work,Winter,Classic & Timeless,304,Classic beige cotton twill trousers with a regular fit for work
+RS-T-048,Ren Studios,Hedda Wool Trousers,Trousers,Olive,Wool Blend,Full,Tailored,,,Evening,Summer,Evening & Polished,383,Tailored olive wool blend trousers with a refined full-length silhouette for evening
+RS-T-049,Ren Studios,Inga Wool Trousers,Trousers,Navy,Wool Blend,Full,Tailored,,,Work,Winter,Classic & Timeless,194,Sharp navy wool blend trousers with a tailored cut for winter work
+RS-T-050,Ren Studios,Jenny Linen Trousers,Trousers,Charcoal,Linen,Full,Relaxed,,,Casual,Autumn,Effortless & Casual,282,Relaxed charcoal linen trousers with an easy full-length shape
+RS-T-051,Ren Studios,Kristin Cotton Trousers,Trousers,Olive,Cotton Twill,Full,Slim,,,Work,Summer,Classic & Timeless,212,Slim-cut olive cotton twill trousers with a clean work silhouette
+RS-T-052,Ren Studios,Lone Cotton Trousers,Trousers,Burgundy,Cotton Twill,Full,Relaxed,,,Casual,Summer,Effortless & Casual,293,Relaxed burgundy cotton twill trousers with a casual easy drape
+RS-T-053,Ren Studios,Maren Wool Trousers,Trousers,Sand,Wool Blend,Full,Tailored,,,Casual,Autumn,Effortless & Casual,365,Tailored sand wool blend trousers with a polished yet relaxed feel
+RS-T-054,Ren Studios,Norunn Cotton Trousers,Trousers,Ivory,Cotton Twill,Full,Tailored,,,Evening,Autumn,Evening & Polished,240,Tailored ivory cotton twill trousers with a sleek evening finish
+RS-T-055,Ren Studios,Oddny Cotton Trousers,Trousers,Forest Green,Cotton Twill,Full,Relaxed,,,Work,Autumn,Classic & Timeless,255,Relaxed forest green cotton twill trousers with an easy shape for work
+RS-T-056,Ren Studios,Reidun Cotton Trousers,Trousers,Sand,Cotton Twill,Full,Relaxed,,,Casual,Autumn,Effortless & Casual,335,Relaxed sand cotton twill trousers with a comfortable everyday shape
+RS-T-057,Ren Studios,Signe Linen Trousers,Trousers,Forest Green,Linen,Full,Tailored,,,Evening,Spring,Evening & Polished,260,Tailored forest green linen trousers with a crisp full-length cut for evening
+RS-T-058,Ren Studios,Tora Linen Trousers,Trousers,White,Linen,Full,Relaxed,,,Evening,Autumn,Evening & Polished,214,Relaxed white linen trousers with a fluid drape for evening
+RS-T-059,Ren Studios,Ulrika Linen Trousers,Trousers,Charcoal,Linen,Full,Tailored,,,Work,Winter,Classic & Timeless,166,Tailored charcoal linen trousers with a sharp structured line for work
+RS-T-060,Ren Studios,Vibeke Cotton Trousers,Trousers,Ivory,Cotton Twill,Full,Relaxed,,,Casual,Spring,Effortless & Casual,203,Relaxed ivory cotton twill trousers with a light casual shape
+RS-T-061,Ren Studios,Wenche Wool Trousers,Trousers,Camel,Wool Blend,Full,Tailored,,,Work,Winter,Classic & Timeless,320,Tailored camel wool blend trousers with a sharp polished work cut
+RS-T-062,Ren Studios,Asa Linen Trousers,Trousers,Cream,Linen,Full,Relaxed,,,Casual,Summer,Effortless & Casual,220,Relaxed cream linen trousers with a breezy easy shape for summer
+RS-T-063,Ren Studios,Borghild Cotton Trousers,Trousers,Black,Cotton Twill,Full,Slim,,,Work,Autumn,Minimalist & Clean,265,Slim black cotton twill trousers with a clean minimal line for work
+RS-T-064,Ren Studios,Dagrun Cotton Trousers,Trousers,Dusty Pink,Cotton Twill,Full,Regular,,,Casual,Spring,Effortless & Casual,210,Regular dusty pink cotton twill trousers with a fresh easy feel
+RS-T-065,Ren Studios,Cecilia Wool Trousers,Trousers,Stone,Wool Blend,Full,Regular,,,Evening,Winter,Evening & Polished,295,Stone wool blend trousers with a regular fit and refined evening drape
+RS-O-061,Ren Studios,Guro Wool Coat,Outerwear,Navy,Wool Blend,Long,Relaxed,Long,Collar,Evening,Summer,Evening & Polished,264,Relaxed navy wool blend long coat with a classic collar for evening
+RS-O-062,Ren Studios,Hildur Cotton Coat,Outerwear,White,Cotton Twill,Midi,Tailored,Long,Collar,Evening,Spring,Evening & Polished,402,Sharp white cotton twill midi coat with a tailored cut and classic collar
+RS-O-063,Ren Studios,Irmelin Wool Coat,Outerwear,Stone,Wool,Midi,Relaxed,Long,Collar,Evening,Winter,Evening & Polished,388,Relaxed stone wool midi coat with a soft drape and classic collar for evening
+RS-O-064,Ren Studios,Jorid Wool Coat,Outerwear,Charcoal,Wool,Midi,Slim,Long,Collar,Casual,Autumn,Effortless & Casual,420,Slim charcoal wool midi coat with a sleek silhouette for everyday wear
+RS-O-065,Ren Studios,Kjerstin Wool Coat,Outerwear,Charcoal,Wool,Midi,Relaxed,Long,Collar,Work,Summer,Classic & Timeless,408,Relaxed charcoal wool midi coat with an unfussy structure for work
+RS-O-066,Ren Studios,Lovisa Wool Coat,Outerwear,Forest Green,Wool,Long,Tailored,Long,Collar,Work,Autumn,Minimalist & Clean,365,Tailored forest green wool long coat with a sharp collar for work
+RS-O-067,Ren Studios,Magnhild Wool Coat,Outerwear,Charcoal,Wool,Long,Slim,Long,Collar,Casual,Spring,Effortless & Casual,274,Slim charcoal wool long coat with a clean pared-back silhouette
+RS-O-068,Ren Studios,Nordis Wool Coat,Outerwear,Beige,Wool,Midi,Tailored,Long,Collar,Evening,Winter,Evening & Polished,272,Tailored beige wool midi coat with a structured collar for evening
+RS-O-069,Ren Studios,Olaug Wool Coat,Outerwear,Burgundy,Wool Blend,Midi,Slim,Long,Collar,Casual,Spring,Effortless & Casual,399,Slim burgundy wool blend midi coat with a refined easy character
+RS-O-070,Ren Studios,Ragnhild Wool Coat,Outerwear,Black,Wool Blend,Midi,Regular,Long,Collar,Evening,Summer,Evening & Polished,232,Black wool blend midi coat with a regular fit and classic collar for evening
+RS-O-071,Ren Studios,Solrun Wool Coat,Outerwear,Ivory,Wool Blend,Midi,Slim,Long,Collar,Casual,Summer,Effortless & Casual,273,Slim ivory wool blend midi coat with a clean pared-back silhouette
+RS-O-072,Ren Studios,Sunniva Wool Coat,Outerwear,Cream,Wool,Midi,Tailored,Long,Collar,Casual,Winter,Effortless & Casual,331,Tailored cream wool midi coat with a structured collar for winter
+RS-O-073,Ren Studios,Thea Cotton Coat,Outerwear,Beige,Cotton Twill,Long,Relaxed,Long,Collar,Casual,Autumn,Effortless & Casual,185,Relaxed beige cotton twill long coat with an easy everyday shape
+RS-O-074,Ren Studios,Ulva Wool Coat,Outerwear,Navy,Wool,Long,Slim,Long,Collar,Evening,Spring,Evening & Polished,360,Slim navy wool long coat with a sharp collar and polished evening finish
+RS-O-075,Ren Studios,Valdis Wool Coat,Outerwear,Camel,Wool Blend,Midi,Relaxed,Long,Collar,Casual,Autumn,Effortless & Casual,213,Relaxed camel wool blend midi coat with a warm unfussy character
+RS-O-076,Ren Studios,Yrsa Wool Coat,Outerwear,Sand,Wool,Midi,Tailored,Long,Collar,Work,Spring,Classic & Timeless,380,Tailored sand wool midi coat with a structured collar for spring work
+RS-O-077,Ren Studios,Ingvild Wool Coat,Outerwear,Olive,Wool Blend,Long,Relaxed,Long,Collar,Work,Autumn,Classic & Timeless,320,Relaxed olive wool blend long coat with a classic collar for work
+RS-O-078,Ren Studios,Solfrid Cotton Coat,Outerwear,Black,Cotton Twill,Midi,Slim,Long,Collar,Work,Spring,Minimalist & Clean,310,Slim black cotton twill midi coat with a sharp minimal profile for work
+RS-O-079,Ren Studios,Astrun Wool Coat,Outerwear,Dusty Pink,Wool Blend,Midi,Regular,Long,Collar,Casual,Spring,Effortless & Casual,265,Regular dusty pink wool blend midi coat with a soft easy character
+RS-O-080,Ren Studios,Bergljot Wool Coat,Outerwear,Ivory,Wool,Long,Tailored,Long,Collar,Evening,Winter,Evening & Polished,395,Tailored ivory wool long coat with a sharp collar and formal evening presence`;
+
+const POLICIES = {"brand":"Ren Studios","policies":[{"id":"orders_confirmation","category":"orders","title":"Order confirmation","policy":"After placing an order, customers receive a confirmation email containing the order number, purchased items, payment method, and delivery details."},{"id":"orders_processing_schedule","category":"orders","title":"Order processing schedule","policy":"Orders are processed Monday through Friday excluding public holidays."},{"id":"orders_shipping_confirmation","category":"orders","title":"Shipping confirmation","policy":"Customers receive a shipping confirmation email with tracking information once the order leaves the warehouse."},{"id":"orders_cancellation","category":"orders","title":"Order cancellation","policy":"Orders cannot always be cancelled or modified once placed because they are processed quickly. Customers should contact customer service immediately if a change is required."},{"id":"orders_after_shipping","category":"orders","title":"Orders already shipped","policy":"Orders that have already shipped cannot be cancelled and must be returned through the standard return process."},{"id":"orders_product_availability","category":"orders","title":"Product availability","policy":"All orders are subject to product availability. If an item becomes unavailable after purchase the customer will be notified and refunded."},{"id":"delivery_standard","category":"delivery","title":"Standard delivery time","policy":"Standard delivery typically takes three to five business days depending on destination."},{"id":"delivery_express","category":"delivery","title":"Express delivery time","policy":"Express delivery usually arrives within one to two business days."},{"id":"delivery_pickup_point","category":"delivery","title":"Pickup point delivery","policy":"Customers may choose delivery to a designated pickup location where parcels can be collected once notified."},{"id":"delivery_shipping_fees","category":"delivery","title":"Shipping fees","policy":"Shipping fees vary depending on the delivery method and destination and are displayed at checkout before payment."},{"id":"delivery_free_shipping","category":"delivery","title":"Free shipping promotions","policy":"Ren Studios may offer free shipping promotions for orders above a specified order value."},{"id":"delivery_tracking","category":"delivery","title":"Order tracking","policy":"Customers receive tracking information by email once an order ships and can also track shipments through their account."},{"id":"delivery_failed_attempt","category":"delivery","title":"Failed delivery attempts","policy":"If delivery fails the courier may attempt delivery again or redirect the parcel to a nearby pickup point."},{"id":"delivery_returned_parcel","category":"delivery","title":"Returned parcels","policy":"If a parcel cannot be delivered and is returned to the warehouse the customer will receive a refund once the return is processed."},{"id":"payments_methods","category":"payments","title":"Accepted payment methods","policy":"Ren Studios accepts major credit cards debit cards PayPal Apple Pay Google Pay and gift cards where available."},{"id":"payments_authorization","category":"payments","title":"Payment authorization","policy":"Payment is authorized when the order is placed and the charge is captured when the order is prepared for shipment."},{"id":"payments_security","category":"payments","title":"Payment security","policy":"All transactions are processed using secure encrypted payment gateways that comply with international payment security standards."},{"id":"payments_vat","category":"payments","title":"VAT and taxes","policy":"Prices displayed on the website include applicable VAT where required by law."},{"id":"payments_import_duties","category":"payments","title":"Import duties","policy":"Customers outside the delivery region may be responsible for import duties customs fees or local taxes."},{"id":"returns_window","category":"returns","title":"Return window","policy":"Items may be returned within 30 days of delivery if they are unused and in original condition with tags attached."},{"id":"returns_conditions","category":"returns","title":"Return conditions","policy":"Returned items must be unworn unwashed and returned with original tags and packaging."},{"id":"returns_exclusions","category":"returns","title":"Non returnable items","policy":"Underwear swimwear personalised products and final sale items cannot be returned."},{"id":"returns_process","category":"returns","title":"Return process","policy":"Customers initiate returns through their account generate a return label package the item securely and ship it using the provided label."},{"id":"returns_shipping_fee","category":"returns","title":"Return shipping fees","policy":"Return shipping may be free or deducted from the refund depending on the customer's region."},{"id":"returns_refund_inspection","category":"returns","title":"Return inspection","policy":"Returned items are inspected after they arrive at the warehouse before refunds are issued."},{"id":"returns_refund_timing","category":"returns","title":"Refund timing","policy":"Refunds are typically issued within five to ten business days after the return has been processed."},{"id":"exchanges_eligibility","category":"exchanges","title":"Exchange eligibility","policy":"Items can be exchanged within the return window if the requested size or colour is available."},{"id":"exchanges_process","category":"exchanges","title":"Exchange process","policy":"Customers request exchanges through the returns portal and return the original item for replacement."},{"id":"exchanges_unavailable","category":"exchanges","title":"Unavailable exchange items","policy":"If the requested replacement item is unavailable the returned item will be refunded."},{"id":"faulty_items_reporting","category":"faulty_items","title":"Reporting faulty items","policy":"Customers should contact customer service within seven days if they receive a faulty damaged or incorrect item."},{"id":"faulty_items_resolution","category":"faulty_items","title":"Faulty item resolution","policy":"Ren Studios will offer a replacement repair or full refund for faulty damaged or incorrect items."},{"id":"faulty_items_shipping","category":"faulty_items","title":"Faulty item return shipping","policy":"Return shipping costs for faulty or incorrect items will be covered by Ren Studios."},{"id":"gift_returns","category":"returns","title":"Gift returns","policy":"Items received as gifts may be returned within the standard return window."},{"id":"gift_refunds","category":"returns","title":"Gift refund method","policy":"Refunds for gift returns may be issued as store credit or returned to the original purchaser."},{"id":"accounts_features","category":"accounts","title":"Customer account features","policy":"Customer accounts allow users to track orders manage returns save delivery addresses and view order history."},{"id":"accounts_management","category":"accounts","title":"Account management","policy":"Customers may update or delete their account information at any time."},{"id":"customer_service_channels","category":"customer_service","title":"Customer service channels","policy":"Ren Studios customer support is available through email and the online contact form."},{"id":"customer_service_topics","category":"customer_service","title":"Customer service support","policy":"Customer service can assist with orders delivery questions returns exchanges and product enquiries."},{"id":"policy_updates","category":"legal","title":"Policy updates","policy":"Ren Studios reserves the right to update service policies at any time. Updated policies will be published on the website."}]};
+
+// ════════════════════════════════════════════════
+//  BUILD SYSTEM PROMPT
+// ════════════════════════════════════════════════
+
+function buildProductData() {
+  const lines = PRODUCT_CSV.trim().split('\n');
+  const headers = lines[0].split(',');
+  const products = [];
+  for (let i = 1; i < lines.length; i++) {
+    const vals = lines[i].split(',');
+    const p = {};
+    headers.forEach((h, idx) => { p[h.trim()] = (vals[idx] || '').trim(); });
+    products.push(p);
+  }
+
+  let out = 'PRODUCT CATALOGUE — REN STUDIOS\n';
+  out += 'Fields: ID | Name | Category | Color | Material | Length | Fit | Sleeve | Neckline | Occasion | Season | Style | Price | Description\n\n';
+  products.forEach(p => {
+    out += `${p.product_id} | ${p.product_name} | ${p.category} | ${p.color} | ${p.material} | ${p.length || '—'} | ${p.fit} | ${p.sleeve || '—'} | ${p.neckline || '—'} | ${p.occasion} | ${p.season} | ${p.style} | €${p.price}\n`;
+    out += `  ${p.description}\n\n`;
+  });
+  return out;
+}
+
+function buildPolicyData() {
+  let out = 'SERVICE POLICIES — REN STUDIOS\n\n';
+  const categories = {};
+  POLICIES.policies.forEach(p => {
+    if (!categories[p.category]) categories[p.category] = [];
+    categories[p.category].push(p);
+  });
+  Object.entries(categories).forEach(([cat, items]) => {
+    out += cat.toUpperCase().replace(/_/g, ' ') + '\n';
+    items.forEach(item => {
+      out += `• ${item.title}: ${item.policy}\n`;
+    });
+    out += '\n';
+  });
+  return out;
+}
+
+const SYSTEM_PROMPT = `You are Nora, the personal styling assistant for Ren Studios — a Scandinavian womenswear brand known for clean lines, refined materials, and effortless elegance. You help customers find the right piece from the Ren Studios collection. Think of yourself as a knowledgeable in-store stylist: attentive, considered, and confident in your recommendations. You guide customers toward the right product rather than leaving them to browse.
+
+TONE OF VOICE
+Warm but restrained. Helpful and friendly without being effusive. Your language is precise and elegant — in keeping with the Ren Studios aesthetic. Avoid filler phrases, excessive enthusiasm, and overly casual language. Short, clear sentences. Always respectful, never rushed.
+
+WHAT YOU CAN DO
+- Help customers find products from the Ren Studios catalogue
+- Answer questions about Ren Studios service policies
+- Escalate to human support when a query is beyond your scope
+
+WHAT YOU CANNOT DO
+- Access specific order data — tracking, order status, missing or late deliveries
+- Resolve complaints or disputes about past purchases
+- Provide detailed personal fit advice beyond standard size conversions
+- Answer questions about other brands or topics unrelated to Ren Studios
+
+CONVERSATION FLOW
+Guide the customer through up to five structured questions before making recommendations. Ask one question at a time — never ask multiple questions in a single message.
+
+If the customer volunteers information early (for example, mentions colour or fit in their opening message), acknowledge it, note it, and skip that question. Move directly to the next unanswered one.
+
+Question 1 — Intent: Understand what they are shopping for — the occasion, context, or type of product. The opening greeting has already been delivered by the interface — do not introduce yourself again. Ask directly: "What are you looking for today?"
+Question 2 — Colour: Ask if they have a colour in mind, including anything they would like to avoid.
+Question 3 — Fit: Map to one of four values: Relaxed, Regular, Slim, or Tailored.
+Question 4 — Length or silhouette: For dresses and skirts: Mini, Midi, or Maxi. For other categories: ask whether they prefer a longer or more cropped cut.
+Question 5 — Aesthetic vibe: Present all four options — Minimalist & Clean, Classic & Timeless, Effortless & Casual, Evening & Polished.
+
+ON PRICE: Do not ask about price. Ren Studios is a premium brand and customers are assumed to be comfortable with premium pricing. However, if the customer mentions budget or price at any point, take it into account when selecting recommendations — favour items at the lower end of the matching range without drawing attention to it.
+
+MAKING RECOMMENDATIONS
+Once you have gathered the customer's preferences, recommend exactly three products. Never fewer, never more.
+
+Present recommendations with this opening line: "Based on what you're looking for, here are three pieces that could work well."
+
+Present each item in this exact format:
+**[Product name]** — €[price]
+[Product description]
+*Why this works: [Personalised explanation]*
+
+The Why this works explanation is not a repeat of the description. It is a short, specific statement connecting the product to this customer's stated needs — their occasion, fit preference, length, or aesthetic vibe. It should read like something a thoughtful stylist would say.
+
+ON SELECTING PRODUCTS: Match to the customer's stated occasion, colour, fit, length, and vibe. If no exact match exists, choose the closest and acknowledge the trade-off briefly in the Why this works note. Do not recommend the same product twice. If the customer has mentioned price, favour items at the lower end of the relevant range.
+
+AFTER RECOMMENDATIONS
+If the customer is not satisfied, ask what didn't work — colour, fit, style, or occasion feel — and use that to refine your selection. Offer up to three alternative products from the remaining catalogue. You do not need to repeat all five questions; work with what they tell you.
+
+If there are no further matching products, respond: "I don't have anything else in the current collection that matches what you're looking for, but I'd suggest reaching out to our team — they may be able to help or let you know if something suitable is on the way." Then offer the handoff.
+
+THE FOUR AESTHETIC VIBES
+Minimalist & Clean — Understated and considered. Pared-back silhouettes, clean lines, and quiet confidence. Typically slim or tailored cuts in neutral or muted tones.
+Classic & Timeless — Enduring rather than trend-driven. Structured, polished, and versatile. Often tailored or regular fit in refined fabrics.
+Effortless & Casual — Relaxed without looking careless. Easy shapes, softer fabrics, an unhurried feel. Relaxed or regular fit.
+Evening & Polished — Elevated and occasion-ready. Fluid fabrics, refined details, a sense of occasion. Slim or tailored silhouettes.
+
+SERVICE POLICY QUESTIONS
+Answer directly from the policy data. Do not improvise or make exceptions not stated in the policy.
+You can answer general policy questions (e.g. can I cancel an order, what payment methods do you accept).
+You cannot answer specific order enquiries (e.g. where is my order, why hasn't my parcel arrived). Specific order queries require human support.
+
+HUMAN HANDOFF
+Escalate when:
+- Customer asks about a specific order — status, tracking, missing or late delivery
+- Customer reports a damaged, faulty, or incorrect item — acknowledge the policy, then escalate
+- Customer raises a complaint or dispute about a past purchase
+- Customer asks for detailed fit guidance beyond standard size conversion
+- No suitable products remain after refining
+- You cannot find an answer in your available data
+
+If the customer asks to speak to a person without context, ask what they need first. Only escalate if their query falls into the above categories or they confirm they want human support.
+
+HANDOFF: Direct the customer to reach Ren Studios support by email or through the contact form on the website. Response time is 1–2 business days.
+
+OUT-OF-SCOPE QUESTIONS
+Respond briefly and redirect: "I'm only able to help with Ren Studios products and orders, but I'd be happy to help you find something in our collection."
+
+---
+
+${buildProductData()}
+
+---
+
+${buildPolicyData()}`;
+
+// ════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════
+
+let API_KEY = '';
+let history = [];
+let streaming = false;
+
+// ════════════════════════════════════════════════
+//  SETUP
+// ════════════════════════════════════════════════
+
+function startChat() {
+  const key = document.getElementById('api-key-input').value.trim();
+  if (!key) {
+    showSetupError('Please enter your Anthropic API key.');
+    return;
+  }
+  if (key.length < 20) {
+    showSetupError('That doesn\'t look like a valid API key — please check and try again.');
+    return;
+  }
+  API_KEY = key;
+  console.log('API key set. Length:', key.length, '| Starts with:', key.substring(0, 10));
+  document.getElementById('api-key-screen').style.display = 'none';
+  document.getElementById('chat-app').style.display = 'flex';
+  addNoraMessage("Welcome to Ren Studios. I'm Nora, your personal shopping assistant. How can I help you today?");
+}
+
+function showSetupError(msg) {
+  document.getElementById('setup-error').innerHTML = `<div class="error-banner">${msg}</div>`;
+}
+
+function resetToSetup() {
+  API_KEY = '';
+  history = [];
+  document.getElementById('messages').innerHTML = '';
+  document.getElementById('api-key-input').value = '';
+  document.getElementById('setup-error').innerHTML = '';
+  document.getElementById('chat-app').style.display = 'none';
+  document.getElementById('api-key-screen').style.display = 'flex';
+}
+
+// ════════════════════════════════════════════════
+//  MESSAGES
+// ════════════════════════════════════════════════
+
+function addNoraMessage(text) {
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'message nora';
+  div.innerHTML = `<div class="msg-sender">Nora</div><div class="msg-bubble">${renderMarkdown(text)}</div>`;
+  msgs.appendChild(div);
+  scrollBottom();
+  return div.querySelector('.msg-bubble');
+}
+
+function addUserMessage(text) {
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'message user';
+  div.innerHTML = `<div class="msg-sender" style="text-align:right">You</div><div class="msg-bubble">${escapeHtml(text)}</div>`;
+  msgs.appendChild(div);
+  scrollBottom();
+}
+
+function showTyping() {
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'typing';
+  div.id = 'typing-indicator';
+  div.innerHTML = `<div class="typing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+  msgs.appendChild(div);
+  scrollBottom();
+}
+
+function removeTyping() {
+  const t = document.getElementById('typing-indicator');
+  if (t) t.remove();
+}
+
+function scrollBottom() {
+  const msgs = document.getElementById('messages');
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+// ════════════════════════════════════════════════
+//  MARKDOWN RENDERER
+// ════════════════════════════════════════════════
+
+function renderMarkdown(text) {
+  // Escape HTML first
+  let html = escapeHtml(text);
+
+  // Bold: **text**
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+  // Italic: *text* (but not ** already processed)
+  html = html.replace(/\*([^*\n]+?)\*/g, '<em>$1</em>');
+
+  // Paragraphs: double newlines
+  const paragraphs = html.split(/\n\n+/);
+  if (paragraphs.length > 1) {
+    html = paragraphs.map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('');
+  } else {
+    html = html.replace(/\n/g, '<br>');
+  }
+
+  return html;
+}
+
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ════════════════════════════════════════════════
+//  CHAT
+// ════════════════════════════════════════════════
+
+async function sendMessage() {
+  if (streaming) return;
+  const input = document.getElementById('user-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+  document.getElementById('chat-error').innerHTML = '';
+  document.getElementById('send-btn').disabled = true;
+
+  addUserMessage(text);
+  history.push({ role: 'user', content: text });
+
+  showTyping();
+  streaming = true;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': API_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 2048,
+        stream: true,
+        system: SYSTEM_PROMPT,
+        messages: history
+      })
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      console.error('API error response:', response.status, JSON.stringify(err));
+      throw new Error(err.error?.message || `API error ${response.status}`);
+    }
+
+    removeTyping();
+
+    // Create Nora message bubble for streaming
+    const msgs = document.getElementById('messages');
+    const div = document.createElement('div');
+    div.className = 'message nora';
+    div.innerHTML = `<div class="msg-sender">Nora</div><div class="msg-bubble" id="streaming-bubble"></div>`;
+    msgs.appendChild(div);
+    const bubble = document.getElementById('streaming-bubble');
+
+    let fullText = '';
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split('\n');
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const data = line.slice(6).trim();
+        if (data === '[DONE]') continue;
+
+        try {
+          const evt = JSON.parse(data);
+          if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') {
+            fullText += evt.delta.text;
+            bubble.innerHTML = renderMarkdown(fullText);
+            scrollBottom();
+          }
+        } catch (_) {}
+      }
+    }
+
+    bubble.removeAttribute('id');
+    history.push({ role: 'assistant', content: fullText });
+
+  } catch (err) {
+    removeTyping();
+    let msg = err.message || 'Something went wrong. Please try again.';
+    if (msg.includes('429')) {
+      msg = 'Rate limit reached. Please wait a moment and try again.';
+    }
+    document.getElementById('chat-error').innerHTML = `<div class="error-banner">${msg}</div>`;
+  } finally {
+    streaming = false;
+    document.getElementById('send-btn').disabled = false;
+    document.getElementById('user-input').focus();
+  }
+}
+
+// ════════════════════════════════════════════════
+//  UI HELPERS
+// ════════════════════════════════════════════════
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 110) + 'px';
+}
+</script>
+</body>
+</html>
