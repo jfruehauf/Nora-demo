@@ -842,7 +842,7 @@ function escapeHtml(text) {
 
 function renderWithImages(text) {
   // Match Nora's recommendation format: **Name** — €Price\nDesc\n*Why this works: ...*
-  const recPattern = /\*\*([^\*\n]+)\*\*\s*[—–-]\s*€(\d+)\n([^\n]+)\n\*Why this works:\s*([^\*\n]+)\*/g;
+  const recPattern = /\*\*([^\*\n]+)\*\*\s*[—–\-]\s*€(\d+)\n+([^\n\*][^\n]*)\n+\*Why this works:\s*([^*]+)\*/g;
   let result = '';
   let lastIndex = 0;
   let match;
