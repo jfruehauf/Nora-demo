@@ -313,6 +313,50 @@
     #messages::-webkit-scrollbar-track { background: transparent; }
     #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
+    /* Product recommendation cards */
+    .product-card {
+      display: flex;
+      margin: 0.75rem 0;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .product-img {
+      width: 100px;
+      min-height: 120px;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: var(--surface);
+      display: block;
+    }
+    .product-details {
+      padding: 0.65rem 0.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      justify-content: center;
+      flex: 1;
+    }
+    .product-header { font-size: 0.875rem; }
+    .product-header .price {
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      font-weight: normal;
+    }
+    .product-desc {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .product-why {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      font-style: italic;
+      line-height: 1.5;
+      margin-top: 0.15rem;
+    }
+
     /* Error */
     .error-banner {
       background: #FEF2F2;
@@ -379,167 +423,162 @@
 //  DATA
 // ════════════════════════════════════════════════
 
-const PRODUCT_CSV = `product_id,brand,product_name,category,color,material,length,fit,sleeve,neckline,occasion,season,style,price,description
-D001,Ren Studios,Freja Linen Midi Dress,Dress,Sand,Linen,Midi,Relaxed,Short,V Neck,Casual,Summer,Effortless & Casual,165,Airy linen midi dress with relaxed Scandinavian shape
-D002,Ren Studios,Astrid Silk Slip Dress,Dress,Black,Silk,Maxi,Slim,Strap,V Neck,Evening,Summer,Evening & Polished,210,Fluid silk slip dress with elegant drape
-D003,Ren Studios,Elin Cotton Shirt Dress,Dress,White,Cotton Poplin,Midi,Regular,Long,Collar,Work,Spring,Classic & Timeless,175,Crisp cotton shirt dress with minimalist tailoring
-D004,Ren Studios,Ingrid Wrap Dress,Dress,Navy,Viscose,Midi,Regular,Long,V Neck,Work,Autumn,Classic & Timeless,185,Soft wrap dress with adjustable waist tie
-D005,Ren Studios,Sigrid Knit Dress,Dress,Charcoal,Merino Wool,Midi,Slim,Long,Crew,Casual,Winter,Minimalist & Clean,195,Soft merino knit dress with refined structure
-D006,Ren Studios,Alva Summer Linen Dress,Dress,Sage,Linen,Midi,Relaxed,Short,Scoop,Casual,Summer,Effortless & Casual,160,Breezy linen dress designed for warm weather
-D007,Ren Studios,Klara Satin Evening Dress,Dress,Emerald,Satin,Maxi,Slim,Sleeveless,V Neck,Evening,Autumn,Evening & Polished,230,Glossy satin evening dress with fluid movement
-D008,Ren Studios,Maja Belted Midi Dress,Dress,Camel,Cotton Twill,Midi,Tailored,Short,Square,Work,Spring,Classic & Timeless,190,Structured midi dress with sculpted waist
-D009,Ren Studios,Nora Pleated Dress,Dress,Soft Blue,Poly Blend,Midi,Regular,Short,Crew,Work,Spring,Classic & Timeless,180,Light pleated dress with elegant movement
-D010,Ren Studios,Elsa Linen Shirt Dress,Dress,Olive,Linen,Midi,Relaxed,Long,Collar,Casual,Summer,Effortless & Casual,170,Relaxed linen shirt dress with soft tailoring
-D011,Ren Studios,Ida Silk Midi Dress,Dress,Ivory,Silk,Midi,Slim,Sleeveless,Boat,Evening,Spring,Evening & Polished,220,Minimal silk dress with elegant simplicity
-D012,Ren Studios,Agnes Cotton Midi Dress,Dress,Dusty Rose,Cotton,Midi,Regular,Short,Crew,Casual,Spring,Effortless & Casual,165,Soft cotton midi dress with clean lines
-D013,Ren Studios,Solveig Wrap Midi Dress,Dress,Burgundy,Viscose,Midi,Regular,Long,V Neck,Evening,Autumn,Evening & Polished,195,Flowing wrap dress with refined drape
-D014,Ren Studios,Liv Knit Midi Dress,Dress,Cream,Merino Wool,Midi,Slim,Long,Crew,Casual,Winter,Minimalist & Clean,200,Comfortable knit dress with Scandinavian minimal style
-D015,Ren Studios,Tilda Linen Summer Dress,Dress,Light Blue,Linen,Midi,Relaxed,Sleeveless,Scoop,Casual,Summer,Effortless & Casual,158,Light linen dress with airy feel
-D016,Ren Studios,Emilia Satin Dress,Dress,Champagne,Satin,Midi,Slim,Sleeveless,Square,Evening,Spring,Evening & Polished,225,Fluid satin dress with soft sheen
-D017,Ren Studios,Hanna Cotton Shirt Dress,Dress,Stone,Cotton Poplin,Midi,Regular,Long,Collar,Work,Spring,Classic & Timeless,175,Modern cotton shirt dress with minimal design
-D018,Ren Studios,Frida Belted Dress,Dress,Navy,Cotton Twill,Midi,Tailored,Short,Crew,Work,Autumn,Classic & Timeless,185,Structured dress with refined waist
-D019,Ren Studios,Karin Pleated Midi Dress,Dress,Light Grey,Poly Blend,Midi,Regular,Sleeveless,Boat,Work,Spring,Classic & Timeless,178,Elegant pleated dress with flowing skirt
-D020,Ren Studios,Linnea Linen Dress,Dress,White,Linen,Midi,Relaxed,Short,V Neck,Casual,Summer,Effortless & Casual,168,Classic linen dress with relaxed silhouette
-D021,Ren Studios,Saga Silk Slip Dress,Dress,Forest Green,Silk,Maxi,Slim,Strap,V Neck,Evening,Summer,Evening & Polished,215,Minimal silk slip dress with fluid lines
-D022,Ren Studios,Petra Cotton Dress,Dress,Black,Cotton,Midi,Regular,Short,Crew,Casual,Autumn,Effortless & Casual,170,Simple cotton dress with modern shape
-D023,Ren Studios,Ylva Wrap Dress,Dress,Plum,Viscose,Midi,Regular,Long,V Neck,Evening,Autumn,Evening & Polished,188,Wrap dress with flattering drape
-D024,Ren Studios,Helena Knit Dress,Dress,Taupe,Merino Wool,Midi,Slim,Long,Crew,Casual,Winter,Minimalist & Clean,205,Soft knit dress designed for cool weather
-D025,Ren Studios,Malin Linen Dress,Dress,Clay,Linen,Midi,Relaxed,Sleeveless,Scoop,Casual,Summer,Effortless & Casual,162,Natural linen dress with relaxed fit
-D026,Ren Studios,Annika Satin Evening Dress,Dress,Navy,Satin,Maxi,Slim,Sleeveless,V Neck,Evening,Winter,Evening & Polished,235,Flowing satin evening dress with elegant shape
-D027,Ren Studios,Birgit Shirt Dress,Dress,Olive,Cotton Poplin,Midi,Tailored,Long,Collar,Work,Autumn,Classic & Timeless,172,Sharp shirt dress with tailored lines
-D028,Ren Studios,Runa Belted Dress,Dress,Beige,Cotton Twill,Midi,Tailored,Short,Square,Work,Spring,Classic & Timeless,188,Structured belted dress with modern profile
-D029,Ren Studios,Kerstin Pleated Dress,Dress,Dusty Blue,Poly Blend,Midi,Regular,Sleeveless,Boat,Work,Spring,Classic & Timeless,176,Soft pleated dress with movement
-D030,Ren Studios,Stina Linen Midi Dress,Dress,Sand,Linen,Midi,Relaxed,Short,V Neck,Casual,Summer,Effortless & Casual,165,Timeless linen midi dress with airy texture
-D031,Ren Studios,Ada Silk Dress,Dress,Ivory,Silk,Midi,Slim,Sleeveless,Boat,Evening,Spring,Evening & Polished,220,Refined silk dress with minimalist elegance
-D032,Ren Studios,Mira Cotton Summer Dress,Dress,Sage,Cotton,Midi,Relaxed,Short,Scoop,Casual,Summer,Effortless & Casual,160,Comfortable cotton dress for warm days
-D033,Ren Studios,Lotta Wrap Dress,Dress,Burgundy,Viscose,Midi,Regular,Long,V Neck,Evening,Autumn,Evening & Polished,192,Wrap dress with soft flowing lines
-D034,Ren Studios,Tove Knit Dress,Dress,Charcoal,Merino Wool,Midi,Slim,Long,Crew,Casual,Winter,Minimalist & Clean,198,Soft knit dress with modern silhouette
-D035,Ren Studios,Siv Linen Dress,Dress,Light Grey,Linen,Midi,Relaxed,Sleeveless,Scoop,Casual,Summer,Effortless & Casual,158,Relaxed linen dress with light texture
-D036,Ren Studios,Greta Satin Dress,Dress,Champagne,Satin,Midi,Slim,Sleeveless,Square,Evening,Spring,Evening & Polished,228,Fluid satin dress with elegant shine
-D037,Ren Studios,Alina Shirt Dress,Dress,White,Cotton Poplin,Midi,Tailored,Long,Collar,Work,Spring,Classic & Timeless,170,Classic shirt dress with refined structure
-D038,Ren Studios,Johanna Belted Dress,Dress,Camel,Cotton Twill,Midi,Tailored,Short,Crew,Work,Autumn,Classic & Timeless,190,Structured dress with defined waist
-D039,Ren Studios,Carina Pleated Dress,Dress,Soft Pink,Poly Blend,Midi,Regular,Sleeveless,Boat,Casual,Spring,Effortless & Casual,175,Delicate pleated dress with soft volume
-D040,Ren Studios,Elvira Linen Dress,Dress,Sage,Linen,Midi,Relaxed,Short,V Neck,Casual,Summer,Effortless & Casual,168,Natural linen dress with breezy shape
-D041,Ren Studios,Marit Silk Slip Dress,Dress,Black,Silk,Maxi,Slim,Strap,V Neck,Evening,Summer,Evening & Polished,215,Minimal silk slip dress with elegant drape
-D042,Ren Studios,Anneli Cotton Dress,Dress,Olive,Cotton,Midi,Regular,Short,Crew,Casual,Spring,Effortless & Casual,168,Simple cotton dress with refined fit
-D043,Ren Studios,Kajsa Wrap Dress,Dress,Navy,Viscose,Midi,Regular,Long,V Neck,Work,Autumn,Classic & Timeless,188,Soft wrap dress with flattering silhouette
-D044,Ren Studios,Elna Knit Dress,Dress,Cream,Merino Wool,Midi,Slim,Long,Crew,Casual,Winter,Minimalist & Clean,200,Comfortable knit dress with clean lines
-D045,Ren Studios,Tyra Linen Dress,Dress,Sand,Linen,Midi,Relaxed,Sleeveless,Scoop,Casual,Summer,Effortless & Casual,160,Relaxed linen dress with Scandinavian ease
-D046,Ren Studios,Sanna Satin Evening Dress,Dress,Deep Green,Satin,Maxi,Slim,Sleeveless,V Neck,Evening,Winter,Evening & Polished,232,Glossy satin dress with flowing form
-D047,Ren Studios,Rakel Shirt Dress,Dress,Stone,Cotton Poplin,Midi,Tailored,Long,Collar,Work,Spring,Classic & Timeless,172,Modern shirt dress with subtle tailoring
-D048,Ren Studios,Noomi Belted Dress,Dress,Beige,Cotton Twill,Midi,Tailored,Short,Square,Work,Spring,Classic & Timeless,188,Structured midi dress with defined waist
-D049,Ren Studios,Alma Pleated Dress,Dress,Soft Blue,Poly Blend,Midi,Regular,Sleeveless,Boat,Casual,Spring,Effortless & Casual,178,Graceful pleated dress with soft movement
-D050,Ren Studios,Isolde Linen Dress,Dress,Light Blue,Linen,Midi,Relaxed,Short,V Neck,Casual,Summer,Effortless & Casual,158,Light linen dress designed for effortless style
-D051,Ren Studios,Freja Mini Dress,Dress,Black,Cotton,Mini,Slim,Short,Scoop,Evening,Summer,Evening & Polished,150,Minimal mini dress with sleek shape
-D052,Ren Studios,Ember Linen Mini Dress,Dress,Clay,Linen,Mini,Relaxed,Sleeveless,Scoop,Casual,Summer,Effortless & Casual,145,Relaxed linen mini dress for warm days
-D053,Ren Studios,Adele Satin Slip Dress,Dress,Silver,Satin,Maxi,Slim,Strap,V Neck,Evening,Winter,Evening & Polished,240,Shimmering satin slip dress with modern elegance
-D054,Ren Studios,Kira Knit Midi Dress,Dress,Forest,Merino Wool,Midi,Slim,Long,Crew,Casual,Winter,Minimalist & Clean,210,Soft knit dress with refined structure
-D055,Ren Studios,Luna Cotton Dress,Dress,White,Cotton,Midi,Relaxed,Short,Crew,Casual,Spring,Effortless & Casual,155,Simple cotton dress with airy shape
-D056,Ren Studios,Sara Wrap Dress,Dress,Deep Red,Viscose,Midi,Regular,Long,V Neck,Evening,Autumn,Evening & Polished,195,Wrap dress with elegant drape
-D057,Ren Studios,Idun Linen Dress,Dress,Sage,Linen,Maxi,Relaxed,Sleeveless,Scoop,Casual,Summer,Effortless & Casual,175,Flowing linen maxi dress with relaxed fit
-D058,Ren Studios,Thyra Satin Midi Dress,Dress,Midnight,Satin,Midi,Slim,Sleeveless,Square,Evening,Winter,Evening & Polished,235,Satin dress with refined evening silhouette
-D059,Ren Studios,Selma Shirt Dress,Dress,Light Blue,Cotton Poplin,Midi,Tailored,Long,Collar,Work,Spring,Classic & Timeless,178,Modern shirt dress with crisp tailoring
-D060,Ren Studios,Edda Knit Dress,Dress,Soft Beige,Merino Wool,Midi,Slim,Long,Crew,Casual,Winter,Minimalist & Clean,205,Warm knit dress with minimalist Nordic design
-RS-B-001,Ren Studios,Britta Silk Blouse,Blouse,White,Silk,Regular,Tailored,Short,Crew,Casual,Autumn,Effortless & Casual,220,Crisp white silk blouse with a tailored cut and clean crew neckline
-RS-B-002,Ren Studios,Dagny Poplin Blouse,Blouse,Camel,Cotton Poplin,Regular,Relaxed,Long,V Neck,Evening,Autumn,Evening & Polished,250,Relaxed camel poplin blouse with long sleeves and a soft V neckline
-RS-B-003,Ren Studios,Ebba Viscose Blouse,Blouse,Ivory,Viscose,Regular,Tailored,Short,V Neck,Casual,Winter,Effortless & Casual,240,Tailored ivory viscose blouse with a draped V neckline and clean finish
-RS-B-004,Ren Studios,Filippa Poplin Blouse,Blouse,Camel,Cotton Poplin,Regular,Relaxed,Long,Collar,Evening,Autumn,Evening & Polished,222,Relaxed long-sleeve poplin blouse with a classic collar for evening
-RS-B-005,Ren Studios,Gunvor Silk Blouse,Blouse,Burgundy,Silk,Regular,Relaxed,Long,V Neck,Work,Spring,Classic & Timeless,380,Fluid burgundy silk blouse with a relaxed shape and open V neckline
-RS-B-006,Ren Studios,Helga Silk Blouse,Blouse,White,Silk,Regular,Slim,Short,Crew,Evening,Autumn,Evening & Polished,307,Fitted white silk blouse with a sleek silhouette and clean crew neckline
-RS-B-007,Ren Studios,Iben Viscose Blouse,Blouse,Stone,Viscose,Regular,Relaxed,Short,V Neck,Casual,Summer,Effortless & Casual,200,Easy-wearing stone viscose blouse with a relaxed shape and V neckline
-RS-B-008,Ren Studios,Jette Silk Blouse,Blouse,Charcoal,Silk,Regular,Tailored,Short,V Neck,Work,Autumn,Classic & Timeless,357,Sharp charcoal silk blouse with tailored structure and a V neckline
-RS-B-009,Ren Studios,Karen Viscose Blouse,Blouse,Navy,Viscose,Regular,Relaxed,Short,Crew,Evening,Autumn,Evening & Polished,336,Relaxed navy viscose blouse with fluid drape and a clean crew neckline
-RS-B-010,Ren Studios,Lena Viscose Blouse,Blouse,Camel,Viscose,Regular,Relaxed,Short,V Neck,Work,Spring,Classic & Timeless,240,Relaxed camel viscose blouse with soft drape and a V neckline for work
-RS-B-011,Ren Studios,Mette Silk Blouse,Blouse,Burgundy,Silk,Regular,Tailored,Short,Collar,Work,Winter,Classic & Timeless,290,Sharp-cut burgundy silk blouse with a tailored fit and classic collar
-RS-B-012,Ren Studios,Nanna Poplin Blouse,Blouse,Ivory,Cotton Poplin,Regular,Regular,Long,Collar,Casual,Spring,Effortless & Casual,276,Classic ivory poplin blouse with long sleeves and a neat collar
-RS-B-013,Ren Studios,Pernille Viscose Blouse,Blouse,Burgundy,Viscose,Regular,Slim,Short,Crew,Work,Autumn,Classic & Timeless,181,Slim-cut burgundy viscose blouse with a clean crew neckline for work
-RS-B-014,Ren Studios,Ragna Silk Blouse,Blouse,White,Silk,Regular,Relaxed,Short,Crew,Casual,Autumn,Effortless & Casual,177,Relaxed white silk blouse with a soft crew neckline for everyday wear
-RS-B-015,Ren Studios,Sigrun Poplin Blouse,Blouse,Cream,Cotton Poplin,Regular,Slim,Long,Crew,Work,Spring,Classic & Timeless,275,Slim cream poplin blouse with long sleeves and a polished crew neckline
-RS-B-016,Ren Studios,Tuva Silk Blouse,Blouse,Black,Silk,Regular,Slim,Long,V Neck,Evening,Winter,Evening & Polished,320,Sleek black silk blouse with a slim fit and open V neckline for evening
-RS-B-017,Ren Studios,Vilde Poplin Blouse,Blouse,Sage,Cotton Poplin,Regular,Relaxed,Long,Crew,Casual,Summer,Effortless & Casual,240,Relaxed sage poplin blouse with long sleeves and a clean crew neckline
-RS-B-018,Ren Studios,Elise Viscose Blouse,Blouse,Forest Green,Viscose,Regular,Slim,Short,V Neck,Work,Summer,Classic & Timeless,215,Slim forest green viscose blouse with a clean V neckline for work
-RS-B-019,Ren Studios,Cecilie Poplin Blouse,Blouse,Sand,Cotton Poplin,Regular,Tailored,Short,Collar,Work,Spring,Classic & Timeless,255,Crisp sand poplin blouse with a tailored cut and neat collar for work
-RS-B-020,Ren Studios,Dorte Silk Blouse,Blouse,Cream,Silk,Regular,Relaxed,Long,V Neck,Evening,Winter,Evening & Polished,290,Relaxed cream silk blouse with a fluid V neckline for evening
-RS-K-016,Ren Studios,Freya Cashmere Knit,Knitwear,Camel,Cashmere Blend,Long,Slim,Long,Crew,Evening,Summer,Evening & Polished,385,Slim camel cashmere knit with long sleeves and a clean crew neckline
-RS-K-017,Ren Studios,Gudrun Wool Knit,Knitwear,Sand,Wool Blend,Long,Tailored,Long,V Neck,Evening,Autumn,Evening & Polished,362,Tailored sand wool blend knit with a refined V neckline for evening
-RS-K-018,Ren Studios,Hege Cashmere Knit,Knitwear,Beige,Cashmere Blend,Regular,Regular,Long,Crew,Casual,Summer,Effortless & Casual,200,Soft beige cashmere knit with a relaxed regular fit and easy crew neckline
-RS-K-019,Ren Studios,Ingunn Cashmere Knit,Knitwear,Charcoal,Cashmere Blend,Regular,Regular,Long,Crew,Evening,Summer,Evening & Polished,364,Lightweight charcoal cashmere knit with a clean regular fit for evening
-RS-K-020,Ren Studios,Jorunn Merino Knit,Knitwear,Sand,Merino Wool,Long,Slim,Long,V Neck,Evening,Summer,Evening & Polished,300,Sleek sand merino knit with a slim silhouette and open V neckline
-RS-K-021,Ren Studios,Kirsten Merino Knit,Knitwear,Sand,Merino Wool,Long,Slim,Long,Crew,Casual,Autumn,Minimalist & Clean,198,Fine-knit sand merino with a slim fit and classic crew neckline
-RS-K-022,Ren Studios,Laila Merino Knit,Knitwear,Olive,Merino Wool,Long,Relaxed,Long,Crew,Work,Summer,Minimalist & Clean,333,Relaxed olive merino knit with an easy drape and crew neckline for work
-RS-K-023,Ren Studios,Marte Merino Knit,Knitwear,Ivory,Merino Wool,Long,Relaxed,Long,V Neck,Evening,Spring,Evening & Polished,255,Relaxed ivory merino knit with a soft V neckline and fluid drape
-RS-K-024,Ren Studios,Randi Merino Knit,Knitwear,Black,Merino Wool,Long,Slim,Long,V Neck,Work,Winter,Minimalist & Clean,340,Refined black merino knit with a slim fit and V neckline for work
-RS-K-025,Ren Studios,Silje Wool Knit,Knitwear,Olive,Wool Blend,Long,Regular,Long,Crew,Work,Autumn,Minimalist & Clean,332,Olive wool blend knit with a regular fit and crew neckline for work
-RS-K-026,Ren Studios,Turid Cashmere Knit,Knitwear,White,Cashmere Blend,Regular,Slim,Long,Crew,Casual,Summer,Effortless & Casual,229,Slim white cashmere knit with a clean crew neckline for everyday wear
-RS-K-027,Ren Studios,Unni Merino Knit,Knitwear,Ivory,Merino Wool,Long,Slim,Long,Crew,Work,Summer,Minimalist & Clean,365,Slim-cut ivory merino knit with a clean crew neckline for work
-RS-K-028,Ren Studios,Vigdis Cashmere Knit,Knitwear,Navy,Cashmere Blend,Long,Slim,Long,V Neck,Work,Autumn,Classic & Timeless,206,Slim navy cashmere knit with a V neckline for polished workwear
-RS-K-029,Ren Studios,Berit Cashmere Knit,Knitwear,Stone,Cashmere Blend,Regular,Regular,Long,Crew,Casual,Spring,Effortless & Casual,396,Soft stone cashmere knit with a regular fit and easy crew neckline
-RS-K-030,Ren Studios,Bente Cashmere Knit,Knitwear,Olive,Cashmere Blend,Regular,Relaxed,Long,Crew,Casual,Autumn,Effortless & Casual,269,Relaxed olive cashmere knit with a cosy crew neckline for everyday wear
-RS-K-031,Ren Studios,Gerd Cashmere Knit,Knitwear,Burgundy,Cashmere Blend,Regular,Slim,Long,Crew,Casual,Winter,Effortless & Casual,310,Slim burgundy cashmere knit with a rich tone and clean crew neckline
-RS-K-032,Ren Studios,Hilde Cashmere Knit,Knitwear,Cream,Cashmere Blend,Regular,Relaxed,Long,Crew,Evening,Winter,Evening & Polished,365,Relaxed cream cashmere knit with a luxurious feel and crew neckline
-RS-K-033,Ren Studios,Iselin Merino Knit,Knitwear,Dusty Pink,Merino Wool,Regular,Regular,Long,V Neck,Casual,Spring,Effortless & Casual,240,Soft dusty pink merino knit with a regular fit and delicate V neckline
-RS-K-034,Ren Studios,Lise Wool Knit,Knitwear,Forest Green,Wool Blend,Long,Tailored,Long,Crew,Work,Winter,Classic & Timeless,295,Tailored forest green wool blend knit with a structured shape for work
-RS-K-035,Ren Studios,Oline Merino Knit,Knitwear,Camel,Merino Wool,Regular,Regular,Long,Crew,Work,Spring,Classic & Timeless,260,Classic camel merino knit with a regular fit and crew neckline for work
-RS-S-031,Ren Studios,Camilla Satin Skirt,Skirt,Light Grey,Satin,Midi,Regular,,,Evening,Winter,Evening & Polished,140,Fluid light grey satin midi skirt with a clean regular cut for evening
-RS-S-032,Ren Studios,Disa Cotton Skirt,Skirt,Olive,Cotton,Mini,Relaxed,,,Casual,Autumn,Effortless & Casual,200,Relaxed olive cotton mini skirt with an easy casual shape
-RS-S-033,Ren Studios,Erika Wool Skirt,Skirt,Stone,Wool Blend,Maxi,Relaxed,,,Evening,Autumn,Evening & Polished,224,Flowing stone wool blend maxi skirt with a relaxed drape for evening
-RS-S-034,Ren Studios,Gunhild Satin Skirt,Skirt,Sand,Satin,Mini,Tailored,,,Evening,Spring,Evening & Polished,316,Tailored sand satin mini skirt with a sleek polished finish
-RS-S-035,Ren Studios,Hedvig Satin Skirt,Skirt,White,Satin,Mini,Regular,,,Casual,Spring,Effortless & Casual,230,White satin mini skirt with a clean regular shape and subtle sheen
-RS-S-036,Ren Studios,Ingeborg Cotton Skirt,Skirt,Sand,Cotton,Midi,Regular,,,Casual,Winter,Effortless & Casual,322,Sand cotton midi skirt with a relaxed regular fit for everyday wear
-RS-S-037,Ren Studios,Josefin Satin Skirt,Skirt,Sand,Satin,Maxi,Relaxed,,,Work,Spring,Classic & Timeless,257,Flowing sand satin maxi skirt with a relaxed silhouette for work
-RS-S-038,Ren Studios,Katrine Satin Skirt,Skirt,White,Satin,Mini,Relaxed,,,Casual,Autumn,Effortless & Casual,174,Relaxed white satin mini skirt with a soft easy shape
-RS-S-039,Ren Studios,Lykke Cotton Skirt,Skirt,Olive,Cotton,Midi,Tailored,,,Work,Winter,Classic & Timeless,270,Tailored olive cotton midi skirt with a sharp structured line for work
-RS-S-040,Ren Studios,Mille Satin Skirt,Skirt,Camel,Satin,Mini,Regular,,,Casual,Summer,Effortless & Casual,240,Camel satin mini skirt with a clean regular cut and warm tone
-RS-S-041,Ren Studios,Nina Satin Skirt,Skirt,Black,Satin,Midi,Regular,,,Evening,Summer,Evening & Polished,256,Sleek black satin midi skirt with fluid movement for evening
-RS-S-042,Ren Studios,Oda Cotton Skirt,Skirt,Soft Blue,Cotton,Maxi,Relaxed,,,Casual,Spring,Effortless & Casual,369,Relaxed soft blue cotton maxi skirt with a breezy casual feel
-RS-S-043,Ren Studios,Pia Cotton Skirt,Skirt,White,Cotton,Maxi,Relaxed,,,Work,Spring,Classic & Timeless,381,Flowing white cotton maxi skirt with a relaxed shape for work
-RS-S-044,Ren Studios,Rikke Wool Skirt,Skirt,Burgundy,Wool Blend,Mini,Slim,,,Casual,Winter,Effortless & Casual,351,Slim-fit burgundy wool blend mini skirt with a sleek winter silhouette
-RS-S-045,Ren Studios,Sofie Wool Skirt,Skirt,Ivory,Wool Blend,Maxi,Regular,,,Work,Spring,Classic & Timeless,390,Ivory wool blend maxi skirt with a regular fit and refined drape for work
-RS-S-046,Ren Studios,Trine Satin Skirt,Skirt,Black,Satin,Midi,Slim,,,Evening,Winter,Evening & Polished,280,Slim black satin midi skirt with a sleek polished finish for evening
-RS-S-047,Ren Studios,Una Wool Skirt,Skirt,Camel,Wool Blend,Midi,Tailored,,,Work,Autumn,Classic & Timeless,310,Tailored camel wool blend midi skirt with a refined structure for work
-RS-S-048,Ren Studios,Vera Cotton Skirt,Skirt,Navy,Cotton,Midi,Regular,,,Work,Summer,Classic & Timeless,245,Classic navy cotton midi skirt with a regular fit for a polished work look
-RS-S-049,Ren Studios,Asta Satin Skirt,Skirt,Dusty Pink,Satin,Mini,Regular,,,Evening,Spring,Evening & Polished,235,Soft dusty pink satin mini skirt with a delicate sheen for evening
-RS-S-050,Ren Studios,Dagmar Wool Skirt,Skirt,Cream,Wool Blend,Maxi,Relaxed,,,Casual,Winter,Minimalist & Clean,340,Relaxed cream wool blend maxi skirt with a soft draped silhouette
-RS-T-046,Ren Studios,Embla Linen Trousers,Trousers,Black,Linen,Full,Tailored,,,Evening,Spring,Evening & Polished,194,Sharp black tailored linen trousers with a clean full-length cut for evening
-RS-T-047,Ren Studios,Fanny Cotton Trousers,Trousers,Beige,Cotton Twill,Full,Regular,,,Work,Winter,Classic & Timeless,304,Classic beige cotton twill trousers with a regular fit for work
-RS-T-048,Ren Studios,Hedda Wool Trousers,Trousers,Olive,Wool Blend,Full,Tailored,,,Evening,Summer,Evening & Polished,383,Tailored olive wool blend trousers with a refined full-length silhouette for evening
-RS-T-049,Ren Studios,Inga Wool Trousers,Trousers,Navy,Wool Blend,Full,Tailored,,,Work,Winter,Classic & Timeless,194,Sharp navy wool blend trousers with a tailored cut for winter work
-RS-T-050,Ren Studios,Jenny Linen Trousers,Trousers,Charcoal,Linen,Full,Relaxed,,,Casual,Autumn,Effortless & Casual,282,Relaxed charcoal linen trousers with an easy full-length shape
-RS-T-051,Ren Studios,Kristin Cotton Trousers,Trousers,Olive,Cotton Twill,Full,Slim,,,Work,Summer,Classic & Timeless,212,Slim-cut olive cotton twill trousers with a clean work silhouette
-RS-T-052,Ren Studios,Lone Cotton Trousers,Trousers,Burgundy,Cotton Twill,Full,Relaxed,,,Casual,Summer,Effortless & Casual,293,Relaxed burgundy cotton twill trousers with a casual easy drape
-RS-T-053,Ren Studios,Maren Wool Trousers,Trousers,Sand,Wool Blend,Full,Tailored,,,Casual,Autumn,Effortless & Casual,365,Tailored sand wool blend trousers with a polished yet relaxed feel
-RS-T-054,Ren Studios,Norunn Cotton Trousers,Trousers,Ivory,Cotton Twill,Full,Tailored,,,Evening,Autumn,Evening & Polished,240,Tailored ivory cotton twill trousers with a sleek evening finish
-RS-T-055,Ren Studios,Oddny Cotton Trousers,Trousers,Forest Green,Cotton Twill,Full,Relaxed,,,Work,Autumn,Classic & Timeless,255,Relaxed forest green cotton twill trousers with an easy shape for work
-RS-T-056,Ren Studios,Reidun Cotton Trousers,Trousers,Sand,Cotton Twill,Full,Relaxed,,,Casual,Autumn,Effortless & Casual,335,Relaxed sand cotton twill trousers with a comfortable everyday shape
-RS-T-057,Ren Studios,Signe Linen Trousers,Trousers,Forest Green,Linen,Full,Tailored,,,Evening,Spring,Evening & Polished,260,Tailored forest green linen trousers with a crisp full-length cut for evening
-RS-T-058,Ren Studios,Tora Linen Trousers,Trousers,White,Linen,Full,Relaxed,,,Evening,Autumn,Evening & Polished,214,Relaxed white linen trousers with a fluid drape for evening
-RS-T-059,Ren Studios,Ulrika Linen Trousers,Trousers,Charcoal,Linen,Full,Tailored,,,Work,Winter,Classic & Timeless,166,Tailored charcoal linen trousers with a sharp structured line for work
-RS-T-060,Ren Studios,Vibeke Cotton Trousers,Trousers,Ivory,Cotton Twill,Full,Relaxed,,,Casual,Spring,Effortless & Casual,203,Relaxed ivory cotton twill trousers with a light casual shape
-RS-T-061,Ren Studios,Wenche Wool Trousers,Trousers,Camel,Wool Blend,Full,Tailored,,,Work,Winter,Classic & Timeless,320,Tailored camel wool blend trousers with a sharp polished work cut
-RS-T-062,Ren Studios,Asa Linen Trousers,Trousers,Cream,Linen,Full,Relaxed,,,Casual,Summer,Effortless & Casual,220,Relaxed cream linen trousers with a breezy easy shape for summer
-RS-T-063,Ren Studios,Borghild Cotton Trousers,Trousers,Black,Cotton Twill,Full,Slim,,,Work,Autumn,Minimalist & Clean,265,Slim black cotton twill trousers with a clean minimal line for work
-RS-T-064,Ren Studios,Dagrun Cotton Trousers,Trousers,Dusty Pink,Cotton Twill,Full,Regular,,,Casual,Spring,Effortless & Casual,210,Regular dusty pink cotton twill trousers with a fresh easy feel
-RS-T-065,Ren Studios,Cecilia Wool Trousers,Trousers,Stone,Wool Blend,Full,Regular,,,Evening,Winter,Evening & Polished,295,Stone wool blend trousers with a regular fit and refined evening drape
-RS-O-061,Ren Studios,Guro Wool Coat,Outerwear,Navy,Wool Blend,Long,Relaxed,Long,Collar,Evening,Summer,Evening & Polished,264,Relaxed navy wool blend long coat with a classic collar for evening
-RS-O-062,Ren Studios,Hildur Cotton Coat,Outerwear,White,Cotton Twill,Midi,Tailored,Long,Collar,Evening,Spring,Evening & Polished,402,Sharp white cotton twill midi coat with a tailored cut and classic collar
-RS-O-063,Ren Studios,Irmelin Wool Coat,Outerwear,Stone,Wool,Midi,Relaxed,Long,Collar,Evening,Winter,Evening & Polished,388,Relaxed stone wool midi coat with a soft drape and classic collar for evening
-RS-O-064,Ren Studios,Jorid Wool Coat,Outerwear,Charcoal,Wool,Midi,Slim,Long,Collar,Casual,Autumn,Effortless & Casual,420,Slim charcoal wool midi coat with a sleek silhouette for everyday wear
-RS-O-065,Ren Studios,Kjerstin Wool Coat,Outerwear,Charcoal,Wool,Midi,Relaxed,Long,Collar,Work,Summer,Classic & Timeless,408,Relaxed charcoal wool midi coat with an unfussy structure for work
-RS-O-066,Ren Studios,Lovisa Wool Coat,Outerwear,Forest Green,Wool,Long,Tailored,Long,Collar,Work,Autumn,Minimalist & Clean,365,Tailored forest green wool long coat with a sharp collar for work
-RS-O-067,Ren Studios,Magnhild Wool Coat,Outerwear,Charcoal,Wool,Long,Slim,Long,Collar,Casual,Spring,Effortless & Casual,274,Slim charcoal wool long coat with a clean pared-back silhouette
-RS-O-068,Ren Studios,Nordis Wool Coat,Outerwear,Beige,Wool,Midi,Tailored,Long,Collar,Evening,Winter,Evening & Polished,272,Tailored beige wool midi coat with a structured collar for evening
-RS-O-069,Ren Studios,Olaug Wool Coat,Outerwear,Burgundy,Wool Blend,Midi,Slim,Long,Collar,Casual,Spring,Effortless & Casual,399,Slim burgundy wool blend midi coat with a refined easy character
-RS-O-070,Ren Studios,Ragnhild Wool Coat,Outerwear,Black,Wool Blend,Midi,Regular,Long,Collar,Evening,Summer,Evening & Polished,232,Black wool blend midi coat with a regular fit and classic collar for evening
-RS-O-071,Ren Studios,Solrun Wool Coat,Outerwear,Ivory,Wool Blend,Midi,Slim,Long,Collar,Casual,Summer,Effortless & Casual,273,Slim ivory wool blend midi coat with a clean pared-back silhouette
-RS-O-072,Ren Studios,Sunniva Wool Coat,Outerwear,Cream,Wool,Midi,Tailored,Long,Collar,Casual,Winter,Effortless & Casual,331,Tailored cream wool midi coat with a structured collar for winter
-RS-O-073,Ren Studios,Thea Cotton Coat,Outerwear,Beige,Cotton Twill,Long,Relaxed,Long,Collar,Casual,Autumn,Effortless & Casual,185,Relaxed beige cotton twill long coat with an easy everyday shape
-RS-O-074,Ren Studios,Ulva Wool Coat,Outerwear,Navy,Wool,Long,Slim,Long,Collar,Evening,Spring,Evening & Polished,360,Slim navy wool long coat with a sharp collar and polished evening finish
-RS-O-075,Ren Studios,Valdis Wool Coat,Outerwear,Camel,Wool Blend,Midi,Relaxed,Long,Collar,Casual,Autumn,Effortless & Casual,213,Relaxed camel wool blend midi coat with a warm unfussy character
-RS-O-076,Ren Studios,Yrsa Wool Coat,Outerwear,Sand,Wool,Midi,Tailored,Long,Collar,Work,Spring,Classic & Timeless,380,Tailored sand wool midi coat with a structured collar for spring work
-RS-O-077,Ren Studios,Ingvild Wool Coat,Outerwear,Olive,Wool Blend,Long,Relaxed,Long,Collar,Work,Autumn,Classic & Timeless,320,Relaxed olive wool blend long coat with a classic collar for work
-RS-O-078,Ren Studios,Solfrid Cotton Coat,Outerwear,Black,Cotton Twill,Midi,Slim,Long,Collar,Work,Spring,Minimalist & Clean,310,Slim black cotton twill midi coat with a sharp minimal profile for work
-RS-O-079,Ren Studios,Astrun Wool Coat,Outerwear,Dusty Pink,Wool Blend,Midi,Regular,Long,Collar,Casual,Spring,Effortless & Casual,265,Regular dusty pink wool blend midi coat with a soft easy character
-RS-O-080,Ren Studios,Bergljot Wool Coat,Outerwear,Ivory,Wool,Long,Tailored,Long,Collar,Evening,Winter,Evening & Polished,395,Tailored ivory wool long coat with a sharp collar and formal evening presence`;
+const PRODUCT_CSV = `product_id,brand,product_name,category,color,material,length,fit,sleeve,neckline,occasion,season,style,price,description,image_url
+D001,Ren Studios,Freja Linen Midi Dress,Dress,Sand,Linen,Midi,Relaxed,Short,V Neck,Casual,Summer,Effortless & Casual,165,Airy linen midi dress with relaxed Scandinavian shape,images/D001.jpg
+D002,Ren Studios,Astrid Silk Slip Dress,Dress,Black,Silk,Maxi,Slim,Strap,V Neck,Evening,Summer,Evening & Polished,210,Fluid silk slip dress with elegant drape,images/D002.jpg
+D003,Ren Studios,Elin Cotton Shirt Dress,Dress,White,Cotton Poplin,Midi,Regular,Long,Collar,Work,Spring,Classic & Timeless,175,Crisp cotton shirt dress with minimalist tailoring,images/D003.jpg
+D004,Ren Studios,Ingrid Wrap Dress,Dress,Navy,Crepe,Midi,Regular,Long,V Neck,Work,Autumn,Classic & Timeless,185,Fluid crepe wrap dress with a clean Scandinavian line,images/D004.jpg
+D005,Ren Studios,Sigrid Knit Dress,Dress,Charcoal,Merino Wool,Midi,Slim,Long,Crew,Casual,Winter,Minimalist & Clean,195,Soft merino knit dress with refined structure,images/D005.jpg
+D006,Ren Studios,Alva Summer Linen Dress,Dress,Sage,Linen,Midi,Relaxed,Short,Scoop,Casual,Summer,Effortless & Casual,160,Breezy linen dress designed for warm weather,images/D006.jpg
+D007,Ren Studios,Klara Satin Evening Dress,Dress,Emerald,Satin,Maxi,Slim,Sleeveless,V Neck,Evening,Autumn,Evening & Polished,230,Glossy satin evening dress with fluid movement,images/D007.jpg
+D008,Ren Studios,Maja Belted Midi Dress,Dress,Camel,Cotton Twill,Midi,Tailored,Short,Square,Work,Spring,Classic & Timeless,190,Structured midi dress with sculpted waist,images/D008.jpg
+D009,Ren Studios,Nora Pleated Dress,Dress,Soft Blue,Poly Blend,Midi,Regular,Short,Crew,Work,Spring,Classic & Timeless,180,Light pleated dress with elegant movement,images/D009.jpg
+D010,Ren Studios,Elsa Linen Shirt Dress,Dress,Olive,Linen,Midi,Relaxed,Long,Collar,Casual,Summer,Effortless & Casual,170,Relaxed linen shirt dress with soft tailoring,images/D010.jpg
+D011,Ren Studios,Ida Silk Midi Dress,Dress,Ivory,Silk,Midi,Slim,Sleeveless,Boat,Evening,Spring,Evening & Polished,220,Minimal silk dress with elegant simplicity,
+D012,Ren Studios,Agnes Cotton Midi Dress,Dress,Dusty Rose,Cotton,Midi,Regular,Short,Crew,Casual,Spring,Effortless & Casual,165,Soft cotton midi dress with clean lines,
+D013,Ren Studios,Solveig Wrap Midi Dress,Dress,Burgundy,Crepe,Midi,Regular,Long,V Neck,Evening,Autumn,Evening & Polished,195,Burgundy crepe wrap midi dress with elegant drape,
+D014,Ren Studios,Liv Knit Midi Dress,Dress,Cream,Merino Wool,Midi,Slim,Long,Crew,Casual,Winter,Minimalist & Clean,200,Comfortable knit dress with Scandinavian minimal style,
+D015,Ren Studios,Tilda Linen Summer Dress,Dress,Light Blue,Linen,Midi,Relaxed,Sleeveless,Scoop,Casual,Summer,Effortless & Casual,158,Light linen dress with airy feel,
+D016,Ren Studios,Emilia Satin Dress,Dress,Champagne,Satin,Midi,Slim,Sleeveless,Square,Evening,Spring,Evening & Polished,225,Fluid satin dress with soft sheen,
+D017,Ren Studios,Hanna Cotton Shirt Dress,Dress,Stone,Cotton Poplin,Midi,Regular,Long,Collar,Work,Spring,Classic & Timeless,175,Modern cotton shirt dress with minimal design,
+D018,Ren Studios,Frida Belted Dress,Dress,Navy,Cotton Twill,Midi,Tailored,Short,Crew,Work,Autumn,Classic & Timeless,185,Structured dress with refined waist,
+D019,Ren Studios,Karin Pleated Midi Dress,Dress,Light Grey,Poly Blend,Midi,Regular,Sleeveless,Boat,Work,Spring,Classic & Timeless,178,Elegant pleated dress with flowing skirt,
+D020,Ren Studios,Linnea Linen Dress,Dress,White,Linen,Midi,Relaxed,Short,V Neck,Casual,Summer,Effortless & Casual,168,Classic linen dress with relaxed silhouette,
+D021,Ren Studios,Saga Silk Slip Dress,Dress,Forest Green,Silk,Maxi,Slim,Strap,V Neck,Evening,Summer,Evening & Polished,215,Minimal silk slip dress with fluid lines,
+D022,Ren Studios,Petra Cotton Dress,Dress,Black,Cotton,Midi,Regular,Short,Crew,Casual,Autumn,Effortless & Casual,170,Simple cotton dress with modern shape,
+D023,Ren Studios,Ylva Wrap Dress,Dress,Plum,Crepe,Midi,Regular,Long,V Neck,Evening,Autumn,Evening & Polished,188,Plum crepe wrap dress with a refined and fluid silhouette,
+D024,Ren Studios,Helena Knit Dress,Dress,Taupe,Merino Wool,Midi,Slim,Long,Crew,Casual,Winter,Minimalist & Clean,205,Soft knit dress designed for cool weather,
+D025,Ren Studios,Malin Linen Dress,Dress,Clay,Linen,Midi,Relaxed,Sleeveless,Scoop,Casual,Summer,Effortless & Casual,162,Natural linen dress with relaxed fit,
+D026,Ren Studios,Annika Satin Evening Dress,Dress,Navy,Satin,Maxi,Slim,Sleeveless,V Neck,Evening,Winter,Evening & Polished,235,Flowing satin evening dress with elegant shape,
+D027,Ren Studios,Birgit Shirt Dress,Dress,Olive,Cotton Poplin,Midi,Tailored,Long,Collar,Work,Autumn,Classic & Timeless,172,Sharp shirt dress with tailored lines,
+D028,Ren Studios,Runa Belted Dress,Dress,Beige,Cotton Twill,Midi,Tailored,Short,Square,Work,Spring,Classic & Timeless,188,Structured belted dress with modern profile,
+D029,Ren Studios,Kerstin Pleated Dress,Dress,Dusty Blue,Poly Blend,Midi,Regular,Sleeveless,Boat,Work,Spring,Classic & Timeless,176,Soft pleated dress with movement,
+D032,Ren Studios,Mira Cotton Summer Dress,Dress,Sage,Cotton,Midi,Relaxed,Short,Scoop,Casual,Summer,Effortless & Casual,160,Comfortable cotton dress for warm days,
+D035,Ren Studios,Siv Linen Dress,Dress,Light Grey,Linen,Midi,Relaxed,Sleeveless,Scoop,Casual,Summer,Effortless & Casual,158,Relaxed linen dress with light texture,
+D037,Ren Studios,Alina Shirt Dress,Dress,White,Cotton Poplin,Midi,Tailored,Long,Collar,Work,Spring,Classic & Timeless,170,Classic shirt dress with refined structure,
+D039,Ren Studios,Carina Pleated Dress,Dress,Soft Pink,Poly Blend,Midi,Regular,Sleeveless,Boat,Casual,Spring,Effortless & Casual,175,Delicate pleated dress with soft volume,
+D042,Ren Studios,Anneli Cotton Dress,Dress,Olive,Cotton,Midi,Regular,Short,Crew,Casual,Spring,Effortless & Casual,168,Simple cotton dress with refined fit,
+D045,Ren Studios,Tyra Linen Dress,Dress,Sand,Linen,Midi,Relaxed,Sleeveless,Scoop,Casual,Summer,Effortless & Casual,160,Relaxed linen dress with Scandinavian ease,
+D046,Ren Studios,Sanna Satin Evening Dress,Dress,Deep Green,Satin,Maxi,Slim,Sleeveless,V Neck,Evening,Winter,Evening & Polished,232,Glossy satin dress with flowing form,
+D047,Ren Studios,Rakel Shirt Dress,Dress,Stone,Cotton Poplin,Midi,Tailored,Long,Collar,Work,Spring,Classic & Timeless,172,Modern shirt dress with subtle tailoring,
+D049,Ren Studios,Alma Pleated Dress,Dress,Soft Blue,Poly Blend,Midi,Regular,Sleeveless,Boat,Casual,Spring,Effortless & Casual,178,Graceful pleated dress with soft movement,
+D050,Ren Studios,Isolde Linen Dress,Dress,Light Blue,Linen,Midi,Relaxed,Short,V Neck,Casual,Summer,Effortless & Casual,158,Light linen dress designed for effortless style,
+D051,Ren Studios,Freja Mini Dress,Dress,Black,Cotton,Mini,Slim,Short,Scoop,Evening,Summer,Evening & Polished,150,Minimal mini dress with sleek shape,
+D052,Ren Studios,Ember Linen Mini Dress,Dress,Clay,Linen,Mini,Relaxed,Sleeveless,Scoop,Casual,Summer,Effortless & Casual,145,Relaxed linen mini dress for warm days,
+D053,Ren Studios,Adele Satin Slip Dress,Dress,Silver,Satin,Maxi,Slim,Strap,V Neck,Evening,Winter,Evening & Polished,240,Shimmering satin slip dress with modern elegance,
+D054,Ren Studios,Kira Knit Midi Dress,Dress,Forest,Merino Wool,Midi,Slim,Long,Crew,Casual,Winter,Minimalist & Clean,210,Soft knit dress with refined structure,
+D055,Ren Studios,Luna Cotton Dress,Dress,White,Cotton,Midi,Relaxed,Short,Crew,Casual,Spring,Effortless & Casual,155,Simple cotton dress with airy shape,
+D056,Ren Studios,Sara Wrap Dress,Dress,Deep Red,Crepe,Midi,Regular,Long,V Neck,Evening,Autumn,Evening & Polished,195,Deep red crepe wrap dress with fluid drape,
+D057,Ren Studios,Idun Linen Dress,Dress,Sage,Linen,Maxi,Relaxed,Sleeveless,Scoop,Casual,Summer,Effortless & Casual,175,Flowing linen maxi dress with relaxed fit,
+D058,Ren Studios,Thyra Satin Midi Dress,Dress,Midnight,Satin,Midi,Slim,Sleeveless,Square,Evening,Winter,Evening & Polished,235,Satin dress with refined evening silhouette,
+D059,Ren Studios,Selma Shirt Dress,Dress,Light Blue,Cotton Poplin,Midi,Tailored,Long,Collar,Work,Spring,Classic & Timeless,178,Modern shirt dress with crisp tailoring,
+D060,Ren Studios,Edda Knit Dress,Dress,Soft Beige,Merino Wool,Midi,Slim,Long,Crew,Casual,Winter,Minimalist & Clean,205,Warm knit dress with minimalist Nordic design,
+D061,Ren Studios,Fiona Off-Shoulder Satin Midi Dress,Dress,Dusty Rose,Satin,Midi,Slim,Off-Shoulder,Off-Shoulder,Evening,Spring,Evening & Polished,235,Off-shoulder satin midi dress for parties and special occasions,images/D061.jpg
+D062,Ren Studios,Mira Velvet Mini Dress,Dress,Deep Plum,Velvet,Mini,Slim,Sleeveless,V Neck,Evening,Autumn,Evening & Polished,225,Luxe velvet mini dress in deep plum — elevated and party-ready,images/D062.jpg
+D063,Ren Studios,Lise Gold Satin Slip Dress,Dress,Gold,Satin,Midi,Slim,Strap,V Neck,Evening,Summer,Evening & Polished,245,Metallic gold satin slip dress for celebratory evenings,images/D063.jpg
+RS-B-001,Ren Studios,White Silk Blouse,Blouse,White,Silk,Regular,Tailored,Short,Crew,Casual,Autumn,Effortless & Casual,220,Tailored silk blouse with soft drape suited for casual styling,images/RS-B-001.jpg
+RS-B-002,Ren Studios,Camel Cotton Poplin Blouse,Blouse,Camel,Cotton Poplin,Regular,Relaxed,Long,V Neck,Evening,Autumn,Evening & Polished,406,Relaxed cotton poplin blouse with soft drape suited for evening styling,images/RS-B-002.jpg
+RS-B-003,Ren Studios,Ivory Silk Blouse,Blouse,Ivory,Silk,Regular,Tailored,Short,V Neck,Casual,Winter,Effortless & Casual,323,Soft ivory silk blouse with a refined drape,images/RS-B-003.jpg
+RS-B-005,Ren Studios,Burgundy Silk Blouse,Blouse,Burgundy,Silk,Regular,Relaxed,Long,V Neck,Work,Spring,Classic & Timeless,380,Relaxed silk blouse with soft drape suited for work styling,images/RS-B-005.jpg
+RS-B-006,Ren Studios,White Silk Blouse,Blouse,White,Silk,Regular,Slim,Short,Crew,Evening,Autumn,Evening & Polished,307,Slim silk blouse with soft drape suited for evening styling,
+RS-B-007,Ren Studios,Stone Crepe Blouse,Blouse,Stone,Crepe,Regular,Relaxed,Short,V Neck,Casual,Summer,Effortless & Casual,200,Stone crepe blouse with a relaxed and polished feel,
+RS-B-008,Ren Studios,Charcoal Silk Blouse,Blouse,Charcoal,Silk,Regular,Tailored,Short,V Neck,Work,Autumn,Classic & Timeless,357,Tailored silk blouse with soft drape suited for work styling,
+RS-B-009,Ren Studios,Navy Silk Blouse,Blouse,Navy,Silk,Regular,Relaxed,Short,Crew,Evening,Autumn,Evening & Polished,336,Fluid navy silk blouse with understated elegance,
+RS-B-010,Ren Studios,Camel Silk Blouse,Blouse,Camel,Silk,Regular,Relaxed,Short,V Neck,Work,Spring,Classic & Timeless,240,Camel silk blouse with a soft and relaxed drape,
+RS-B-011,Ren Studios,Burgundy Silk Blouse,Blouse,Burgundy,Silk,Regular,Tailored,Short,Collar,Work,Winter,Classic & Timeless,135,Tailored silk blouse with soft drape suited for work styling,
+RS-B-012,Ren Studios,Ivory Cotton Poplin Blouse,Blouse,Ivory,Cotton Poplin,Regular,Regular,Long,Collar,Casual,Spring,Effortless & Casual,276,Regular cotton poplin blouse with soft drape suited for casual styling,
+RS-B-013,Ren Studios,Burgundy Silk Blouse,Blouse,Burgundy,Silk,Regular,Slim,Short,Crew,Work,Autumn,Classic & Timeless,181,Burgundy silk blouse with slim tailored cut,
+RS-B-014,Ren Studios,White Silk Blouse,Blouse,White,Silk,Regular,Relaxed,Short,Crew,Casual,Autumn,Effortless & Casual,177,Relaxed silk blouse with soft drape suited for casual styling,
+RS-B-015,Ren Studios,Cream Cotton Poplin Blouse,Blouse,Cream,Cotton Poplin,Regular,Slim,Long,Crew,Work,Spring,Classic & Timeless,275,Slim cotton poplin blouse with soft drape suited for work styling,
+RS-B-016,Ren Studios,Ivory Silk Pussy-Bow Blouse,Blouse,Ivory,Silk,Regular,Relaxed,Long,Pussy-Bow,Work,Spring,Classic & Timeless,195,Ivory silk blouse with a soft pussy-bow neckline,images/RS-B-016.jpg
+RS-B-017,Ren Studios,Black Sheer Silk Pussy-Bow Blouse,Blouse,Black,Sheer Silk,Regular,Slim,Long,Pussy-Bow,Evening,Summer,Evening & Polished,215,Sheer black silk blouse with a dramatic pussy-bow detail,images/RS-B-017.jpg
+RS-B-018,Ren Studios,Ivory Silk Lace-Trim Top,Blouse,Ivory,Silk,Regular,Slim,Short,Crew,Casual,Summer,Effortless & Casual,175,Fine silk crew-neck top with delicate lace trim along the hem,images/RS-B-018.jpg
+RS-B-019,Ren Studios,Black Silk Lace-Trim Top,Blouse,Black,Silk,Regular,Slim,Short,Crew,Evening,Summer,Evening & Polished,185,Black silk crew-neck top with lace trim along the hem — effortlessly evening-ready,images/RS-B-019.jpg
+RS-B-020,Ren Studios,Champagne Silk Lace-Trim Top,Blouse,Champagne,Silk,Regular,Slim,Sleeveless,Crew,Evening,Summer,Evening & Polished,185,Champagne silk sleeveless crew-neck top with delicate lace trim along the hem,images/RS-B-020.jpg
+RS-B-021,Ren Studios,Ivory Polka Dot Silk Blouse,Blouse,Ivory,Silk,Regular,Relaxed,Long,V Neck,Casual,Spring,Effortless & Casual,185,Ivory silk blouse with a fine navy polka dot print,images/RS-B-021.jpg
+RS-B-022,Ren Studios,Black Polka Dot Silk Blouse,Blouse,Black,Silk,Regular,Relaxed,Long,V Neck,Work,Spring,Classic & Timeless,185,Black silk blouse with ivory polka dot print and relaxed drape,images/RS-B-022.jpg
+RS-B-023,Ren Studios,Navy Polka Dot Cotton Blouse,Blouse,Navy,Cotton Poplin,Regular,Regular,Long,Collar,Casual,Spring,Effortless & Casual,155,Crisp cotton blouse in navy with a white polka dot print,images/RS-B-023.jpg
+RS-K-016,Ren Studios,Camel Cashmere Blend Knitwear,Knitwear,Camel,Cashmere Blend,Long,Slim,Long,Crew,Evening,Summer,Evening & Polished,385,Soft cashmere blend knit with slim silhouette ideal for evening wear,images/RS-K-016.jpg
+RS-K-017,Ren Studios,Sand Wool Blend Knitwear,Knitwear,Sand,Wool Blend,Long,Tailored,Long,V Neck,Evening,Autumn,Evening & Polished,362,Soft wool blend knit with tailored silhouette ideal for evening wear,images/RS-K-017.jpg
+RS-K-018,Ren Studios,Beige Chunky Knit Jumper,Knitwear,Beige,Chunky Knit,Regular,Regular,Long,Crew,Casual,Summer,Effortless & Casual,200,Oversized chunky knit jumper with relaxed silhouette,images/RS-K-018.jpg
+RS-K-019,Ren Studios,Charcoal Cable Knit Jumper,Knitwear,Charcoal,Cable Knit,Regular,Regular,Long,Crew,Evening,Summer,Evening & Polished,364,Textured cable knit jumper in charcoal,images/RS-K-019.jpg
+RS-K-020,Ren Studios,Sand Merino Wool Knitwear,Knitwear,Sand,Merino Wool,Long,Slim,Long,V Neck,Evening,Summer,Evening & Polished,300,Soft merino wool knit with slim silhouette ideal for evening wear,
+RS-K-021,Ren Studios,Sand Merino Wool Knitwear,Knitwear,Sand,Merino Wool,Long,Slim,Long,Crew,Casual,Autumn,Minimalist & Clean,198,Soft merino wool knit with slim silhouette ideal for casual wear,
+RS-K-022,Ren Studios,Olive Merino Cardigan,Knitwear,Olive,Merino Wool,Long,Relaxed,Long,Crew,Work,Summer,Minimalist & Clean,333,Open-front merino wool cardigan in olive,
+RS-K-023,Ren Studios,Ivory Merino Wool Knitwear,Knitwear,Ivory,Merino Wool,Long,Relaxed,Long,V Neck,Evening,Spring,Evening & Polished,163,Soft merino wool knit with relaxed silhouette ideal for evening wear,images/RS-K-023.jpg
+RS-K-024,Ren Studios,Black Merino Wool Knitwear,Knitwear,Black,Merino Wool,Long,Slim,Long,V Neck,Work,Winter,Minimalist & Clean,406,Soft merino wool knit with slim silhouette ideal for work wear,images/RS-K-024.jpg
+RS-K-025,Ren Studios,Olive Bouclé Knit Jumper,Knitwear,Olive,Bouclé Wool,Long,Regular,Long,Crew,Work,Autumn,Minimalist & Clean,332,Textured bouclé jumper in olive,
+RS-K-026,Ren Studios,White Cashmere Short-Sleeve Knit,Knitwear,White,Cashmere Blend,Regular,Slim,Short,Crew,Casual,Summer,Effortless & Casual,229,Fine cashmere short-sleeve knit top in white,
+RS-K-027,Ren Studios,Ivory Merino Wool Knitwear,Knitwear,Ivory,Merino Wool,Long,Slim,Long,Crew,Work,Summer,Minimalist & Clean,365,Soft merino wool knit with slim silhouette ideal for work wear,
+RS-K-028,Ren Studios,Navy Cashmere Blend Knitwear,Knitwear,Navy,Cashmere Blend,Long,Slim,Long,V Neck,Work,Autumn,Classic & Timeless,206,Soft cashmere blend knit with slim silhouette ideal for work wear,images/RS-K-028.jpg
+RS-K-029,Ren Studios,Stone Chunky Knit Jumper,Knitwear,Stone,Chunky Knit,Regular,Relaxed,Long,Crew,Casual,Spring,Effortless & Casual,396,Substantial chunky knit jumper in warm stone,
+RS-K-030,Ren Studios,Olive Cable Knit Cardigan,Knitwear,Olive,Cable Knit,Regular,Relaxed,Long,Crew,Casual,Autumn,Effortless & Casual,269,Longline cable knit cardigan in olive,
+RS-K-031,Ren Studios,Cream Merino Turtleneck,Knitwear,Cream,Merino Wool,Long,Slim,Long,Turtleneck,Work,Autumn,Minimalist & Clean,185,Fine merino turtleneck in cream with a slim silhouette,images/RS-K-031.jpg
+RS-K-032,Ren Studios,Black Merino Turtleneck,Knitwear,Black,Merino Wool,Long,Slim,Long,Turtleneck,Work,Autumn,Minimalist & Clean,185,Classic black merino turtleneck — refined and versatile,images/RS-K-032.jpg
+RS-K-033,Ren Studios,Camel Merino Turtleneck,Knitwear,Camel,Merino Wool,Regular,Regular,Long,Turtleneck,Casual,Autumn,Effortless & Casual,195,Warm camel merino turtleneck with an easy relaxed feel,images/RS-K-033.jpg
+RS-K-034,Ren Studios,Charcoal Merino Turtleneck,Knitwear,Charcoal,Merino Wool,Regular,Regular,Long,Turtleneck,Work,Autumn,Classic & Timeless,185,Charcoal merino turtleneck for work and beyond,images/RS-K-034.jpg
+RS-K-035,Ren Studios,Ivory Merino Short-Sleeve Turtleneck,Knitwear,Ivory,Merino Wool,Regular,Slim,Short,Turtleneck,Casual,Spring,Minimalist & Clean,175,Short-sleeve merino turtleneck in ivory — a layering essential,images/RS-K-035.jpg
+RS-K-036,Ren Studios,Navy Merino Short-Sleeve Turtleneck,Knitwear,Navy,Merino Wool,Regular,Slim,Short,Turtleneck,Work,Spring,Classic & Timeless,175,Short-sleeve merino turtleneck in navy — sharp and minimal,images/RS-K-036.jpg
+RS-S-031,Ren Studios,Light Grey Satin Skirt,Skirt,Light Grey,Satin,Midi,Regular,,,Evening,Winter,Evening & Polished,140,Midi satin skirt with clean lines suited for evening occasions,images/RS-S-031.jpg
+RS-S-032,Ren Studios,Olive Cotton Skirt,Skirt,Olive,Cotton,Mini,Relaxed,,,Casual,Autumn,Effortless & Casual,360,Mini cotton skirt with clean lines suited for casual occasions,images/RS-S-032.jpg
+RS-S-033,Ren Studios,Stone Wool Blend Skirt,Skirt,Stone,Wool Blend,Maxi,Relaxed,,,Evening,Autumn,Evening & Polished,224,Maxi wool blend skirt with clean lines suited for evening occasions,images/RS-S-033.jpg
+RS-S-034,Ren Studios,Sand Satin Skirt,Skirt,Sand,Satin,Mini,Tailored,,,Evening,Spring,Evening & Polished,316,Mini satin skirt with clean lines suited for evening occasions,
+RS-S-035,Ren Studios,White Satin Skirt,Skirt,White,Satin,Mini,Regular,,,Casual,Spring,Effortless & Casual,230,Mini satin skirt with clean lines suited for casual occasions,
+RS-S-036,Ren Studios,Sand Cotton Skirt,Skirt,Sand,Cotton,Midi,Regular,,,Casual,Winter,Effortless & Casual,322,Midi cotton skirt with clean lines suited for casual occasions,
+RS-S-037,Ren Studios,Sand Satin Skirt,Skirt,Sand,Satin,Maxi,Relaxed,,,Work,Spring,Classic & Timeless,257,Maxi satin skirt with clean lines suited for work occasions,
+RS-S-038,Ren Studios,White Satin Skirt,Skirt,White,Satin,Mini,Relaxed,,,Casual,Autumn,Effortless & Casual,174,Mini satin skirt with clean lines suited for casual occasions,
+RS-S-039,Ren Studios,Olive Cotton Skirt,Skirt,Olive,Cotton,Midi,Tailored,,,Work,Winter,Classic & Timeless,133,Midi cotton skirt with clean lines suited for work occasions,
+RS-S-040,Ren Studios,Camel Satin Skirt,Skirt,Camel,Satin,Mini,Regular,,,Casual,Summer,Effortless & Casual,390,Mini satin skirt with clean lines suited for casual occasions,images/RS-S-040.jpg
+RS-S-041,Ren Studios,Black Satin Skirt,Skirt,Black,Satin,Midi,Regular,,,Evening,Summer,Evening & Polished,256,Midi satin skirt with clean lines suited for evening occasions,images/RS-S-041.jpg
+RS-S-042,Ren Studios,Soft Blue Cotton Skirt,Skirt,Soft Blue,Cotton,Maxi,Relaxed,,,Casual,Spring,Effortless & Casual,369,Maxi cotton skirt with clean lines suited for casual occasions,
+RS-S-043,Ren Studios,White Cotton Skirt,Skirt,White,Cotton,Maxi,Relaxed,,,Work,Spring,Classic & Timeless,381,Maxi cotton skirt with clean lines suited for work occasions,
+RS-S-044,Ren Studios,Burgundy Wool Blend Skirt,Skirt,Burgundy,Wool Blend,Mini,Slim,,,Casual,Winter,Effortless & Casual,351,Mini wool blend skirt with clean lines suited for casual occasions,images/RS-S-044.jpg
+RS-S-045,Ren Studios,Ivory Wool Blend Skirt,Skirt,Ivory,Wool Blend,Maxi,Regular,,,Work,Spring,Classic & Timeless,390,Maxi wool blend skirt with clean lines suited for work occasions,
+RS-S-046,Ren Studios,Black Satin Pencil Skirt,Skirt,Black,Satin,Midi,Tailored,,,Evening,Autumn,Evening & Polished,165,Sleek black satin pencil skirt with a tailored silhouette,images/RS-S-046.jpg
+RS-S-047,Ren Studios,Camel Wool Pencil Skirt,Skirt,Camel,Wool Blend,Midi,Tailored,,,Work,Autumn,Classic & Timeless,175,Tailored camel wool pencil skirt — polished and precise,images/RS-S-047.jpg
+RS-S-048,Ren Studios,Leopard Print Silk Pencil Skirt,Skirt,Leopard Print,Silk,Midi,Slim,,,Evening,Spring,Evening & Polished,225,Silk pencil skirt in a bold leopard print — statement dressing with a refined edge,images/RS-S-048.jpg
+RS-T-046,Ren Studios,Black Linen Trousers,Trousers,Black,Linen,Full,Tailored,,,Evening,Spring,Evening & Polished,194,Tailored linen trousers with refined structure for evening dressing,images/RS-T-046.jpg
+RS-T-047,Ren Studios,Beige Cotton Twill Trousers,Trousers,Beige,Cotton Twill,Full,Regular,,,Work,Winter,Classic & Timeless,304,Regular cotton twill trousers with refined structure for work dressing,images/RS-T-047.jpg
+RS-T-048,Ren Studios,Olive Wool Blend Trousers,Trousers,Olive,Wool Blend,Full,Tailored,,,Evening,Summer,Evening & Polished,383,Tailored wool blend trousers with refined structure for evening dressing,images/RS-T-048.jpg
+RS-T-049,Ren Studios,Navy Wool Blend Trousers,Trousers,Navy,Wool Blend,Full,Tailored,,,Work,Winter,Classic & Timeless,194,Tailored wool blend trousers with refined structure for work dressing,images/RS-T-049.jpg
+RS-T-050,Ren Studios,Charcoal Linen Trousers,Trousers,Charcoal,Linen,Cropped,Relaxed,,,Casual,Autumn,Effortless & Casual,282,Relaxed linen trousers with refined structure for casual dressing,images/RS-T-050.jpg
+RS-T-051,Ren Studios,Olive Cotton Twill Trousers,Trousers,Olive,Cotton Twill,Full,Slim,,,Work,Summer,Classic & Timeless,212,Slim cotton twill trousers with refined structure for work dressing,
+RS-T-052,Ren Studios,Burgundy Cotton Twill Trousers,Trousers,Burgundy,Cotton Twill,Cropped,Relaxed,,,Casual,Summer,Effortless & Casual,293,Relaxed cotton twill trousers with refined structure for casual dressing,
+RS-T-053,Ren Studios,Sand Wool Blend Trousers,Trousers,Sand,Wool Blend,Full,Tailored,,,Casual,Autumn,Effortless & Casual,365,Tailored wool blend trousers with refined structure for casual dressing,
+RS-T-054,Ren Studios,Ivory Cotton Twill Trousers,Trousers,Ivory,Cotton Twill,Full,Tailored,,,Evening,Autumn,Evening & Polished,157,Tailored cotton twill trousers with refined structure for evening dressing,images/RS-T-054.jpg
+RS-T-055,Ren Studios,Forest Green Cotton Twill Trousers,Trousers,Forest Green,Cotton Twill,Full,Relaxed,,,Work,Autumn,Classic & Timeless,160,Relaxed cotton twill trousers with refined structure for work dressing,
+RS-T-056,Ren Studios,Sand Cotton Twill Trousers,Trousers,Sand,Cotton Twill,Cropped,Slim,,,Casual,Autumn,Effortless & Casual,335,Relaxed cotton twill trousers with refined structure for casual dressing,images/RS-T-056.jpg
+RS-T-057,Ren Studios,Forest Green Linen Trousers,Trousers,Forest Green,Linen,Full,Tailored,,,Evening,Spring,Evening & Polished,413,Tailored linen trousers with refined structure for evening dressing,
+RS-T-058,Ren Studios,White Linen Trousers,Trousers,White,Linen,Cropped,Relaxed,,,Evening,Autumn,Evening & Polished,214,Relaxed linen trousers with refined structure for evening dressing,
+RS-T-059,Ren Studios,Charcoal Linen Trousers,Trousers,Charcoal,Linen,Full,Tailored,,,Work,Winter,Classic & Timeless,166,Tailored linen trousers with refined structure for work dressing,
+RS-T-060,Ren Studios,Ivory Cotton Twill Trousers,Trousers,Ivory,Cotton Twill,Cropped,Relaxed,,,Casual,Spring,Effortless & Casual,203,Relaxed cotton twill trousers with refined structure for casual dressing,
+RS-T-061,Ren Studios,Cream Linen Wide-Leg Trousers,Trousers,Cream,Linen,Full,Wide-Leg,,,Casual,Summer,Effortless & Casual,175,Fluid wide-leg linen trousers in cream,images/RS-T-061.jpg
+RS-T-062,Ren Studios,Black Wool Wide-Leg Trousers,Trousers,Black,Wool Blend,Full,Wide-Leg,,,Work,Autumn,Minimalist & Clean,195,Sharp black wool wide-leg trousers with a clean silhouette,images/RS-T-062.jpg
+RS-T-063,Ren Studios,Camel Crepe Wide-Leg Trousers,Trousers,Camel,Crepe,Full,Wide-Leg,,,Work,Spring,Classic & Timeless,185,Elegant camel crepe wide-leg trousers with a fluid drape,images/RS-T-063.jpg
+RS-T-064,Ren Studios,Ivory Silk Wide-Leg Trousers,Trousers,Ivory,Silk,Full,Wide-Leg,,,Evening,Summer,Evening & Polished,215,Ivory silk wide-leg trousers with an elegant fluid silhouette,images/RS-T-064.jpg
+RS-T-065,Ren Studios,Stone Linen Wide-Leg Trousers,Trousers,Stone,Linen,Full,Wide-Leg,,,Casual,Summer,Minimalist & Clean,175,Relaxed stone linen wide-leg trousers for effortless warm-weather dressing,images/RS-T-065.jpg
+RS-O-061,Ren Studios,Navy Wool Blend Outerwear,Outerwear,Navy,Wool Blend,Long,Relaxed,Long,Collar,Evening,Summer,Evening & Polished,264,Long wool blend coat with tailored profile suited for evening outings,images/RS-O-061.jpg
+RS-O-062,Ren Studios,White Cotton Twill Outerwear,Outerwear,White,Cotton Twill,Midi,Tailored,Long,Collar,Evening,Spring,Evening & Polished,402,Midi cotton twill coat with tailored profile suited for evening outings,images/RS-O-062.jpg
+RS-O-063,Ren Studios,Stone Wool Outerwear,Outerwear,Stone,Wool,Midi,Relaxed,Long,Collar,Evening,Winter,Evening & Polished,388,Midi wool coat with tailored profile suited for evening outings,images/RS-O-063.jpg
+RS-O-064,Ren Studios,Charcoal Wool Outerwear,Outerwear,Charcoal,Wool,Midi,Slim,Long,Collar,Casual,Autumn,Effortless & Casual,420,Midi wool coat with tailored profile suited for casual outings,images/RS-O-064.jpg
+RS-O-065,Ren Studios,Charcoal Wool Outerwear,Outerwear,Charcoal,Wool,Midi,Relaxed,Long,Collar,Work,Summer,Classic & Timeless,408,Midi wool coat with tailored profile suited for work outings,
+RS-O-066,Ren Studios,Forest Green Wool Outerwear,Outerwear,Forest Green,Wool,Long,Tailored,Long,Collar,Work,Autumn,Minimalist & Clean,365,Long wool coat with tailored profile suited for work outings,
+RS-O-067,Ren Studios,Charcoal Wool Outerwear,Outerwear,Charcoal,Wool,Long,Slim,Long,Collar,Casual,Spring,Effortless & Casual,274,Long wool coat with tailored profile suited for casual outings,
+RS-O-068,Ren Studios,Beige Wool Outerwear,Outerwear,Beige,Wool,Midi,Tailored,Long,Collar,Evening,Winter,Evening & Polished,272,Midi wool coat with tailored profile suited for evening outings,
+RS-O-069,Ren Studios,Burgundy Wool Blend Outerwear,Outerwear,Burgundy,Wool Blend,Midi,Slim,Long,Collar,Casual,Spring,Effortless & Casual,399,Midi wool blend coat with tailored profile suited for casual outings,images/RS-O-069.jpg
+RS-O-070,Ren Studios,Black Wool Blend Outerwear,Outerwear,Black,Wool Blend,Midi,Regular,Long,Collar,Evening,Summer,Evening & Polished,232,Midi wool blend coat with tailored profile suited for evening outings,images/RS-O-070.jpg
+RS-O-071,Ren Studios,Ivory Cropped Wool Jacket,Outerwear,Ivory,Wool Blend,Cropped,Tailored,Long,Collar,Casual,Summer,Effortless & Casual,273,Sharp cropped jacket in ivory wool blend,images/RS-O-071.jpg
+RS-O-072,Ren Studios,Cream Double-Breasted Trench Coat,Outerwear,Cream,Cotton Twill,Midi,Tailored,Long,Collar,Casual,Winter,Effortless & Casual,331,Classic double-breasted trench coat in cream,images/RS-O-072.jpg
+RS-O-073,Ren Studios,Beige Cotton Twill Outerwear,Outerwear,Beige,Cotton Twill,Long,Relaxed,Long,Collar,Casual,Autumn,Effortless & Casual,185,Long cotton twill coat with tailored profile suited for casual outings,
+RS-O-074,Ren Studios,Navy Wool Outerwear,Outerwear,Navy,Wool,Long,Slim,Long,Collar,Evening,Spring,Evening & Polished,152,Long wool coat with tailored profile suited for evening outings,
+RS-O-075,Ren Studios,Camel Wool Blend Outerwear,Outerwear,Camel,Wool Blend,Midi,Relaxed,Long,Collar,Casual,Autumn,Effortless & Casual,213,Midi wool blend coat with tailored profile suited for casual outings,
+RS-O-076,Ren Studios,Camel Short Trench Jacket,Outerwear,Camel,Cotton Twill,Short,Tailored,Long,Collar,Casual,Spring,Classic & Timeless,265,Cropped trench jacket in camel cotton twill,images/RS-O-076.jpg
+RS-O-077,Ren Studios,Black Wool Blazer,Outerwear,Black,Wool Blend,Short,Tailored,Long,Collar,Work,Autumn,Minimalist & Clean,285,Sharp black wool blazer with clean lapels,images/RS-O-077.jpg
+RS-O-078,Ren Studios,Ivory Linen Blazer,Outerwear,Ivory,Linen,Short,Tailored,Long,Collar,Casual,Spring,Effortless & Casual,255,Relaxed ivory linen blazer for effortless layering,images/RS-O-078.jpg
+RS-O-079,Ren Studios,Camel Wool Blazer,Outerwear,Camel,Wool Blend,Short,Tailored,Long,Collar,Work,Autumn,Classic & Timeless,285,Classic camel wool blazer with structured shoulders,images/RS-O-079.jpg
+RS-O-080,Ren Studios,Black Satin Bomber Jacket,Outerwear,Black,Satin,Short,Relaxed,Long,Crew,Evening,Autumn,Evening & Polished,265,Polished black satin bomber — dressed-up evening casual,images/RS-O-080.jpg
+RS-O-081,Ren Studios,Olive Wool Bomber Jacket,Outerwear,Olive,Wool Blend,Short,Relaxed,Long,Crew,Casual,Autumn,Effortless & Casual,275,Soft olive wool bomber with relaxed weekend ease,images/RS-O-081.jpg
+RS-O-082,Ren Studios,Navy Silk Bomber Jacket,Outerwear,Navy,Silk,Short,Regular,Long,Crew,Evening,Summer,Classic & Timeless,285,Navy silk bomber for an elevated evening look,images/RS-O-082.jpg`;
 
 const POLICIES = {"brand":"Ren Studios","policies":[{"id":"orders_confirmation","category":"orders","title":"Order confirmation","policy":"After placing an order, customers receive a confirmation email containing the order number, purchased items, payment method, and delivery details."},{"id":"orders_processing_schedule","category":"orders","title":"Order processing schedule","policy":"Orders are processed Monday through Friday excluding public holidays."},{"id":"orders_shipping_confirmation","category":"orders","title":"Shipping confirmation","policy":"Customers receive a shipping confirmation email with tracking information once the order leaves the warehouse."},{"id":"orders_cancellation","category":"orders","title":"Order cancellation","policy":"Orders cannot always be cancelled or modified once placed because they are processed quickly. Customers should contact customer service immediately if a change is required."},{"id":"orders_after_shipping","category":"orders","title":"Orders already shipped","policy":"Orders that have already shipped cannot be cancelled and must be returned through the standard return process."},{"id":"orders_product_availability","category":"orders","title":"Product availability","policy":"All orders are subject to product availability. If an item becomes unavailable after purchase the customer will be notified and refunded."},{"id":"delivery_standard","category":"delivery","title":"Standard delivery time","policy":"Standard delivery typically takes three to five business days depending on destination."},{"id":"delivery_express","category":"delivery","title":"Express delivery time","policy":"Express delivery usually arrives within one to two business days."},{"id":"delivery_pickup_point","category":"delivery","title":"Pickup point delivery","policy":"Customers may choose delivery to a designated pickup location where parcels can be collected once notified."},{"id":"delivery_shipping_fees","category":"delivery","title":"Shipping fees","policy":"Shipping fees vary depending on the delivery method and destination and are displayed at checkout before payment."},{"id":"delivery_free_shipping","category":"delivery","title":"Free shipping promotions","policy":"Ren Studios may offer free shipping promotions for orders above a specified order value."},{"id":"delivery_tracking","category":"delivery","title":"Order tracking","policy":"Customers receive tracking information by email once an order ships and can also track shipments through their account."},{"id":"delivery_failed_attempt","category":"delivery","title":"Failed delivery attempts","policy":"If delivery fails the courier may attempt delivery again or redirect the parcel to a nearby pickup point."},{"id":"delivery_returned_parcel","category":"delivery","title":"Returned parcels","policy":"If a parcel cannot be delivered and is returned to the warehouse the customer will receive a refund once the return is processed."},{"id":"payments_methods","category":"payments","title":"Accepted payment methods","policy":"Ren Studios accepts major credit cards debit cards PayPal Apple Pay Google Pay and gift cards where available."},{"id":"payments_authorization","category":"payments","title":"Payment authorization","policy":"Payment is authorized when the order is placed and the charge is captured when the order is prepared for shipment."},{"id":"payments_security","category":"payments","title":"Payment security","policy":"All transactions are processed using secure encrypted payment gateways that comply with international payment security standards."},{"id":"payments_vat","category":"payments","title":"VAT and taxes","policy":"Prices displayed on the website include applicable VAT where required by law."},{"id":"payments_import_duties","category":"payments","title":"Import duties","policy":"Customers outside the delivery region may be responsible for import duties customs fees or local taxes."},{"id":"returns_window","category":"returns","title":"Return window","policy":"Items may be returned within 30 days of delivery if they are unused and in original condition with tags attached."},{"id":"returns_conditions","category":"returns","title":"Return conditions","policy":"Returned items must be unworn unwashed and returned with original tags and packaging."},{"id":"returns_exclusions","category":"returns","title":"Non returnable items","policy":"Underwear swimwear personalised products and final sale items cannot be returned."},{"id":"returns_process","category":"returns","title":"Return process","policy":"Customers initiate returns through their account generate a return label package the item securely and ship it using the provided label."},{"id":"returns_shipping_fee","category":"returns","title":"Return shipping fees","policy":"Return shipping may be free or deducted from the refund depending on the customer's region."},{"id":"returns_refund_inspection","category":"returns","title":"Return inspection","policy":"Returned items are inspected after they arrive at the warehouse before refunds are issued."},{"id":"returns_refund_timing","category":"returns","title":"Refund timing","policy":"Refunds are typically issued within five to ten business days after the return has been processed."},{"id":"exchanges_eligibility","category":"exchanges","title":"Exchange eligibility","policy":"Items can be exchanged within the return window if the requested size or colour is available."},{"id":"exchanges_process","category":"exchanges","title":"Exchange process","policy":"Customers request exchanges through the returns portal and return the original item for replacement."},{"id":"exchanges_unavailable","category":"exchanges","title":"Unavailable exchange items","policy":"If the requested replacement item is unavailable the returned item will be refunded."},{"id":"faulty_items_reporting","category":"faulty_items","title":"Reporting faulty items","policy":"Customers should contact customer service within seven days if they receive a faulty damaged or incorrect item."},{"id":"faulty_items_resolution","category":"faulty_items","title":"Faulty item resolution","policy":"Ren Studios will offer a replacement repair or full refund for faulty damaged or incorrect items."},{"id":"faulty_items_shipping","category":"faulty_items","title":"Faulty item return shipping","policy":"Return shipping costs for faulty or incorrect items will be covered by Ren Studios."},{"id":"gift_returns","category":"returns","title":"Gift returns","policy":"Items received as gifts may be returned within the standard return window."},{"id":"gift_refunds","category":"returns","title":"Gift refund method","policy":"Refunds for gift returns may be issued as store credit or returned to the original purchaser."},{"id":"accounts_features","category":"accounts","title":"Customer account features","policy":"Customer accounts allow users to track orders manage returns save delivery addresses and view order history."},{"id":"accounts_management","category":"accounts","title":"Account management","policy":"Customers may update or delete their account information at any time."},{"id":"customer_service_channels","category":"customer_service","title":"Customer service channels","policy":"Ren Studios customer support is available through email and the online contact form."},{"id":"customer_service_topics","category":"customer_service","title":"Customer service support","policy":"Customer service can assist with orders delivery questions returns exchanges and product enquiries."},{"id":"policy_updates","category":"legal","title":"Policy updates","policy":"Ren Studios reserves the right to update service policies at any time. Updated policies will be published on the website."}]};
 
@@ -583,6 +622,21 @@ function buildPolicyData() {
   });
   return out;
 }
+
+function buildProductLookup() {
+  const lines = PRODUCT_CSV.trim().split('\n');
+  const headers = lines[0].split(',');
+  const lookup = {};
+  for (let i = 1; i < lines.length; i++) {
+    const vals = lines[i].split(',');
+    const p = {};
+    headers.forEach((h, idx) => { p[h.trim()] = (vals[idx] || '').trim(); });
+    if (p.product_name) lookup[p.product_name] = p;
+  }
+  return lookup;
+}
+
+const PRODUCT_LOOKUP = buildProductLookup();
 
 const SYSTEM_PROMPT = `You are Nora, the personal styling assistant for Ren Studios — a Scandinavian womenswear brand known for clean lines, refined materials, and effortless elegance. You help customers find the right piece from the Ren Studios collection. Think of yourself as a knowledgeable in-store stylist: attentive, considered, and confident in your recommendations. You guide customers toward the right product rather than leaving them to browse.
 
@@ -786,6 +840,44 @@ function escapeHtml(text) {
     .replace(/"/g, '&quot;');
 }
 
+function renderWithImages(text) {
+  // Match Nora's recommendation format: **Name** — €Price\nDesc\n*Why this works: ...*
+  const recPattern = /\*\*([^\*\n]+)\*\*\s*[—–-]\s*€(\d+)\n([^\n]+)\n\*Why this works:\s*([^\*\n]+)\*/g;
+  let result = '';
+  let lastIndex = 0;
+  let match;
+  recPattern.lastIndex = 0;
+
+  while ((match = recPattern.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      result += renderMarkdown(text.slice(lastIndex, match.index));
+    }
+    const name = match[1].trim();
+    const price = match[2];
+    const desc = match[3].trim();
+    const why = match[4].trim();
+    const product = PRODUCT_LOOKUP[name];
+
+    if (product && product.image_url) {
+      result += `<div class="product-card">` +
+        `<img class="product-img" src="${product.image_url}" alt="${escapeHtml(name)}" onerror="this.style.display='none'">` +
+        `<div class="product-details">` +
+        `<div class="product-header"><strong>${escapeHtml(name)}</strong> <span class="price">€${price}</span></div>` +
+        `<div class="product-desc">${escapeHtml(desc)}</div>` +
+        `<div class="product-why"><em>Why this works: ${escapeHtml(why)}</em></div>` +
+        `</div></div>`;
+    } else {
+      result += renderMarkdown(match[0]);
+    }
+    lastIndex = recPattern.lastIndex;
+  }
+
+  if (lastIndex < text.length) {
+    result += renderMarkdown(text.slice(lastIndex));
+  }
+  return result || renderMarkdown(text);
+}
+
 // ════════════════════════════════════════════════
 //  CHAT
 // ════════════════════════════════════════════════
@@ -868,6 +960,7 @@ async function sendMessage() {
       }
     }
 
+    bubble.innerHTML = renderWithImages(fullText);
     bubble.removeAttribute('id');
     history.push({ role: 'assistant', content: fullText });
 
