@@ -598,11 +598,11 @@ function buildProductData() {
   }
 
   let out = 'PRODUCT CATALOGUE — REN STUDIOS\n';
-  out += 'ID|Name|Category|Color|Material|Length|Fit|Sleeve|Neckline|Occasion|Style|Price\n\n';
+  out += 'ID|Name|Category|Color|Material|Length|Fit|Sleeve|Occasion|Price\n\n';
   products.forEach(p => {
-    out += `${p.product_id}|${p.product_name}|${p.category}|${p.color}|${p.material}|${p.length||'-'}|${p.fit}|${p.sleeve||'-'}|${p.neckline||'-'}|${p.occasion}|${p.style}|€${p.price}\n`;
+    out += `${p.product_id}|${p.product_name}|${p.category}|${p.color}|${p.material}|${p.length||'-'}|${p.fit}|${p.sleeve||'-'}|${p.occasion}|€${p.price}\n`;
   });
-  // season field excluded to reduce token count
+  // season, neckline, style fields excluded to reduce token count
   return out;
 }
 
