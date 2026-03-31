@@ -598,11 +598,11 @@ function buildProductData() {
   }
 
   let out = 'PRODUCT CATALOGUE — REN STUDIOS\n';
-  out += 'Fields: ID | Name | Category | Color | Material | Length | Fit | Sleeve | Neckline | Occasion | Season | Style | Price | Description\n\n';
+  out += 'ID|Name|Category|Color|Material|Length|Fit|Sleeve|Neckline|Occasion|Style|Price\n\n';
   products.forEach(p => {
-    out += `${p.product_id} | ${p.product_name} | ${p.category} | ${p.color} | ${p.material} | ${p.length || '—'} | ${p.fit} | ${p.sleeve || '—'} | ${p.neckline || '—'} | ${p.occasion} | ${p.season} | ${p.style} | €${p.price}\n`;
-    out += `  ${p.description}\n\n`;
+    out += `${p.product_id}|${p.product_name}|${p.category}|${p.color}|${p.material}|${p.length||'-'}|${p.fit}|${p.sleeve||'-'}|${p.neckline||'-'}|${p.occasion}|${p.style}|€${p.price}\n`;
   });
+  // season field excluded to reduce token count
   return out;
 }
 
@@ -674,7 +674,6 @@ Present recommendations with this opening line: "Based on what you're looking fo
 
 Present each item in this exact format:
 **[Product name]** — €[price]
-[Product description]
 *Why this works: [Personalised explanation]*
 
 The Why this works explanation is not a repeat of the description. It is a short, specific statement connecting the product to this customer's stated needs — their occasion, fit preference, length, or aesthetic vibe. It should read like something a thoughtful stylist would say.
@@ -841,8 +840,8 @@ function escapeHtml(text) {
 }
 
 function renderWithImages(text) {
-  // Match Nora's recommendation format: **Name** — €Price\nDesc\n*Why this works: ...*
-  const recPattern = /\*\*([^\*\n]+)\*\*\s*[—–\-]\s*€(\d+)\n+([^\n\*][^\n]*)\n+\*Why this works:\s*([^*]+)\*/g;
+  // Match Nora's format: **Name** — €Price\n*Why this works: ...*
+  const recPattern = /\*\*([^\*\n]+)\*\*\s*[—–\-]\s*€(\d+)\n+\*Why this works:\s*([^*]+)\*/g;
   let result = '';
   let lastIndex = 0;
   let match;
@@ -854,16 +853,15 @@ function renderWithImages(text) {
     }
     const name = match[1].trim();
     const price = match[2];
-    const desc = match[3].trim();
-    const why = match[4].trim();
+    const why = match[3].trim();
     const product = PRODUCT_LOOKUP[name];
 
-    if (product && product.image_url) {
+    if (product) {
       result += `<div class="product-card">` +
-        `<img class="product-img" src="${product.image_url}" alt="${escapeHtml(name)}" onerror="this.style.display='none'">` +
+        `<img class="product-img" src="images/${product.product_id}.jpg" alt="${escapeHtml(name)}" onerror="this.style.display='none'">` +
         `<div class="product-details">` +
         `<div class="product-header"><strong>${escapeHtml(name)}</strong> <span class="price">€${price}</span></div>` +
-        `<div class="product-desc">${escapeHtml(desc)}</div>` +
+        (product.description ? `<div class="product-desc">${escapeHtml(product.description)}</div>` : '') +
         `<div class="product-why"><em>Why this works: ${escapeHtml(why)}</em></div>` +
         `</div></div>`;
     } else {
@@ -913,7 +911,7 @@ async function sendMessage() {
         max_tokens: 2048,
         stream: true,
         system: SYSTEM_PROMPT,
-        messages: history
+        messages: history.slice(-12)
       })
     });
 
